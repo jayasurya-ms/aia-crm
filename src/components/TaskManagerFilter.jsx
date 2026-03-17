@@ -15,6 +15,11 @@ const TaskManagerFilter = () => {
       color: "from-pink-500 to-orange-400",
     },
     {
+      label: "Future List",
+      path: "/task-future",
+      color: "from-cyan-500 to-pink-400",
+    },
+    {
       label: "Inspection List",
       path: "/task-inspection",
       color: "from-blue-500 to-cyan-400",
@@ -31,6 +36,11 @@ const TaskManagerFilter = () => {
       label: "Pending List",
       path: "/task-pending",
       color: "from-pink-500 to-orange-400",
+    },
+    {
+      label: "Future List",
+      path: "/task-future",
+      color: "from-cyan-500 to-pink-400",
     },
     {
       label: "Repetitive",

@@ -101,6 +101,7 @@ import EditRepetitive from "./pages/taskManager/repetitive/EditRepetitive";
 import NotFound from "./components/common/NotFound";
 import TaskManager from "./pages/Dowloads/taskmanager/TaskManagerDownload";
 import TaskManagerReport from "./pages/Dowloads/taskmanager/TaskManagerReport";
+import FutureListTask from "./pages/taskManager/futureList/FutureListTask";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -194,6 +195,7 @@ const App = () => {
           <Route path="/add-repetitive" element={<AddRepetitive />} />
           <Route path="/update-repetitive/:id" element={<EditRepetitive />} />
           <Route path="/task-pending" element={<PendingListTask />} />
+          <Route path="/task-future" element={<FutureListTask />} />
           <Route path="/task-completed" element={<CompletedListTask />} />
           <Route path="/add-task" element={<AddTask />} />
           <Route path="/edit-task/:id" element={<EditTask />} />
