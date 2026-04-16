@@ -30,6 +30,29 @@ import {
 import CommonCard from "../../components/common/dataCard/CommonCard";
 import Fields from "../../components/common/TextField/TextField";
 import Layout from "../../layout/Layout";
+
+const enquiry_reasons = [
+  {
+    value: "No Response",
+    label: "No Response",
+  },
+  {
+    value: "Not Interested",
+    label: "Not Interested",
+  },
+  {
+    value: "Lost to Competitor",
+    label: "Lost to Competitor",
+  },
+  {
+    value: "Junk",
+    label: "Junk",
+  },
+  {
+    value: "Budget Issue",
+    label: "Budget Issue",
+  },
+];
 const status = [
   {
     value: "New Enquiry",
@@ -42,6 +65,10 @@ const status = [
   {
     value: "In Process",
     label: "In Process",
+  },
+  {
+    value: "Pending for Payment",
+    label: "Pending for Payment",
   },
   {
     value: "Student",
@@ -66,6 +93,7 @@ const EditEnquiry = () => {
     enquiry_remarks: "",
     enquiry_follow_date: "",
     enquiry_status: "",
+    enquiry_reasons: "",
     enquiry_employee_name: "",
   });
 
@@ -82,7 +110,7 @@ const EditEnquiry = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
       const employees = response.data.employee || [];
 
@@ -105,7 +133,7 @@ const EditEnquiry = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       setEnquiry(response.data.enquiry);
@@ -148,7 +176,7 @@ const EditEnquiry = () => {
       Office No: 0129-417-4177\n
       Toll free: 1800-1200-2555`;
     const whatsappLink = `https://wa.me/${code}${phoneNumber}?text=${encodeURIComponent(
-      message
+      message,
     )}`;
 
     let data = {
@@ -193,7 +221,7 @@ const EditEnquiry = () => {
     Office No: 0129-417-4177\n
     Toll free: 1800-1200-2555`;
     const whatsappLink = `https://wa.me/${code}${phoneNumber}?text=${encodeURIComponent(
-      message
+      message,
     )}`;
 
     let data = {
@@ -227,6 +255,7 @@ const EditEnquiry = () => {
       enquiry_remarks: enquiry.enquiry_remarks,
       enquiry_follow_date: enquiry.enquiry_follow_date,
       enquiry_status: enquiry.enquiry_status,
+      enquiry_reasons: enquiry.enquiry_reasons,
       enquiry_employee_name: enquiry.enquiry_employee_name,
     };
     try {
@@ -237,7 +266,7 @@ const EditEnquiry = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (response.data.code == 200) {
@@ -276,7 +305,7 @@ const EditEnquiry = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (res.data.code === 200) {
@@ -321,7 +350,7 @@ const EditEnquiry = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (res.data.code == 200) {
@@ -364,9 +393,9 @@ const EditEnquiry = () => {
                   enquiry.enquiry_status == "New Enquiry"
                     ? whatsApp1
                     : enquiry.enquiry_status == "Postponed" ||
-                      enquiry.enquiry_status == "In Process"
-                    ? whatsApp2
-                    : ""
+                        enquiry.enquiry_status == "In Process"
+                      ? whatsApp2
+                      : ""
                 }
                 className={ButtonIcons}
               />
@@ -382,7 +411,9 @@ const EditEnquiry = () => {
             </div>
             <div className="p-6 mt-3 bg-white shadow-md rounded-lg">
               <form id="addIndiv" autoComplete="off">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div
+                  className={`grid grid-cols-1 gap-6 mb-6 ${enquiry.enquiry_status == "Not Interested Closed" ? "md:grid-cols-4" : "md:grid-cols-3"}`}
+                >
                   <Fields
                     title="Employee Name"
                     type="whatsappDropdown"
@@ -405,6 +436,20 @@ const EditEnquiry = () => {
                       options={status}
                     />
                   </div>
+                  {enquiry.enquiry_status == "Not Interested Closed" && (
+                    <div className="form-group">
+                      <Fields
+                        required={false}
+                        title="Enquiry Reasons"
+                        type="whatsappDropdown"
+                        autoComplete="Name"
+                        name="enquiry_reasons"
+                        value={enquiry.enquiry_reasons}
+                        onChange={(e) => onInputChange(e)}
+                        options={enquiry_reasons}
+                      />
+                    </div>
+                  )}
 
                   <div>
                     <Input
@@ -467,7 +512,7 @@ const EditEnquiry = () => {
                                 {dataSumm.follow_up_date == null
                                   ? ""
                                   : moment(dataSumm.follow_up_date).format(
-                                      "DD-MM-YYYY"
+                                      "DD-MM-YYYY",
                                     )}
                               </span>
                             </div>
@@ -478,7 +523,7 @@ const EditEnquiry = () => {
                                 {dataSumm.follow_up_next_date == null
                                   ? ""
                                   : moment(dataSumm.follow_up_next_date).format(
-                                      "DD-MM-YYYY"
+                                      "DD-MM-YYYY",
                                     )}
                               </span>
                             </div>
@@ -495,7 +540,7 @@ const EditEnquiry = () => {
                           <td class="py-3 px-6 text-center">
                             {moment(dataSumm.follow_up_date).isSame(
                               moment(),
-                              "day"
+                              "day",
                             ) ? (
                               <>
                                 <FollowUpEdit
