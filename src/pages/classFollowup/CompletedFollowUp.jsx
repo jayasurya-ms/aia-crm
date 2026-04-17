@@ -10,6 +10,7 @@ import moment from "moment";
 import { CircularProgress } from "@mui/material";
 import { toast } from "react-toastify";
 import ClassFollowUpFilter from "../../components/ClassFollowupFilter";
+import { Edit } from "@mui/icons-material";
 
 const CompletedFollowUp = () => {
 
@@ -137,8 +138,13 @@ const CompletedFollowUp = () => {
         customBodyRender: (id) => {
           return (
             <div className="flex items-center space-x-2">
+              <Edit
+                onClick={() => navigate(`/edit-class-followup/${id}`)}
+                title="view "
+                className="h-5 w-5 cursor-pointer"
+              />
               <MdOutlineRemoveRedEye
-              onClick={() => navigate(`/view-completed-followup/${id}`)}
+                onClick={() => navigate(`/view-completed-followup/${id}`)}
                 title="view "
                 className="h-5 w-5 cursor-pointer"
               />
