@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Layout from "../../layout/Layout";
 import MUIDataTable from "mui-datatables";
 import axios from "axios";
@@ -23,10 +23,14 @@ import {
   ClassWhatsapp,
 } from "../../components/buttonIndex/ButtonComponents";
 import { ButtonCreate } from "../../components/common/ButtonCss";
+import { Input } from "@material-tailwind/react";
 
 const ClassList = () => {
   const [classListData, setClassListData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [classDate, setClassDate] = useState(
+    localStorage.getItem("class_date_filter") || "",
+  );
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
   const [shouldRefetch, setShouldRefetch] = useState(false);
@@ -45,7 +49,7 @@ const ClassList = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         const res = response.data?.class;
@@ -144,7 +148,7 @@ const ClassList = () => {
         Academy of Internal Audit\n
         C-826, Vipul Plaza, Sector-81`;
       const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-        message
+        message,
       )}`;
       window.open(whatsappLink, "_blank");
     });
@@ -285,6 +289,18 @@ const ClassList = () => {
     },
   ];
 
+  const filteredData = useMemo(() => {
+    if (!classListData) return [];
+
+    return classListData.filter((item) => {
+      const matchesClassDate = classDate
+        ? moment(item[0], "DD-MM-YYYY").format("YYYY-MM-DD") === classDate
+        : true;
+
+      return matchesClassDate;
+    });
+  }, [classListData, classDate]);
+
   const options = {
     selectableRows: "none",
     elevation: 0,
@@ -301,12 +317,27 @@ const ClassList = () => {
           Class List
         </h3>
 
-        {/* <Link
-          to="/add-class"
-          className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
-        >
-          + Add Class
-        </Link> */}
+        <div className="flex gap-4">
+          <Input
+            label="Date"
+            type="date"
+            value={classDate}
+            onChange={(e) => {
+              setClassDate(e.target.value);
+              localStorage.setItem("class_date_filter", e.target.value);
+            }}
+          ></Input>
+          <button
+            onClick={() => {
+              setClassDate("");
+              localStorage.removeItem("class_date_filter");
+            }}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg"
+          >
+            Clear
+          </button>
+        </div>
+
         <ClassCreate
           className={ButtonCreate}
           onClick={() => navigate("/add-class")}
@@ -314,7 +345,7 @@ const ClassList = () => {
       </div>
       <div className="mt-5">
         <MUIDataTable
-          data={classListData ? classListData : []}
+          data={filteredData ? filteredData : []}
           columns={columns}
           options={options}
         />

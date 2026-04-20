@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Layout from "../../../layout/Layout";
 import EnquiryFilter from "../../../components/EnquiryFilter";
 import { ContextPanel } from "../../../utils/ContextPanel";
@@ -15,10 +15,17 @@ import {
   EnquiryOverDueView,
 } from "../../../components/buttonIndex/ButtonComponents";
 import { ButtonCreate } from "../../../components/common/ButtonCss";
+import { Input } from "@material-tailwind/react";
 
 const OverdueListEnquiry = () => {
   const [overdueListData, setOverdueListData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [enquiryDate, setEnquiryDate] = useState(
+    localStorage.getItem("enquiry_date_overdue_filter") || "",
+  );
+  const [followupDate, setFollowupDate] = useState(
+    localStorage.getItem("followup_date_overdue_filter") || "",
+  );
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,7 +44,7 @@ const OverdueListEnquiry = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         let res = response.data?.enquiry;
@@ -79,7 +86,7 @@ const OverdueListEnquiry = () => {
       name: "enquiry_date",
       label: "Enquiry Date",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRender: (value) => {
           return moment(value).format("DD-MM-YYYY");
@@ -90,7 +97,7 @@ const OverdueListEnquiry = () => {
       name: "enquiry_follow_date",
       label: "Followup Date",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRender: (value) => {
           return moment(value).format("DD-MM-YYYY");
@@ -180,6 +187,21 @@ const OverdueListEnquiry = () => {
       },
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!overdueListData) return [];
+    return overdueListData.filter((item) => {
+      const matchesEnquiryDate = enquiryDate
+        ? moment(item.enquiry_date).format("YYYY-MM-DD") === enquiryDate
+        : true;
+      const matchesFollowupDate = followupDate
+        ? moment(item.enquiry_follow_date).format("YYYY-MM-DD") === followupDate
+        : true;
+
+      return matchesEnquiryDate && matchesFollowupDate;
+    });
+  }, [overdueListData, enquiryDate, followupDate]);
+
   const options = {
     selectableRows: "none",
     elevation: 0,
@@ -214,24 +236,52 @@ const OverdueListEnquiry = () => {
         <h3 className="text-center md:text-left text-lg md:text-xl font-bold">
           Enquiry Overdue List
         </h3>
-
-        {/* <button
-          onClick={handleOpenButton}
-          className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
-        >
-          + Add Enquiry
-        </button> */}
+        <div className="flex gap-4">
+          <Input
+            label="Enquiry Date"
+            type="date"
+            max={moment().format("YYYY-MM-DD")}
+            value={enquiryDate}
+            onChange={(e) => {
+              setEnquiryDate(e.target.value);
+              localStorage.setItem(
+                "enquiry_date_overdue_filter",
+                e.target.value,
+              );
+            }}
+          ></Input>
+          <Input
+            label="Followup Date"
+            type="date"
+            max={moment().format("YYYY-MM-DD")}
+            value={followupDate}
+            onChange={(e) => {
+              setFollowupDate(e.target.value);
+              localStorage.setItem(
+                "followup_date_overdue_filter",
+                e.target.value,
+              );
+            }}
+          ></Input>
+          <button
+            onClick={() => {
+              setEnquiryDate("");
+              setFollowupDate("");
+              localStorage.removeItem("enquiry_date_overdue_filter");
+              localStorage.removeItem("followup_date_overdue_filter");
+            }}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg"
+          >
+            Clear
+          </button>
+        </div>
         <EnquiryOverDueCreate
           onClick={handleOpenButton}
           className={ButtonCreate}
         />
       </div>
       <div className="mt-5">
-        <MUIDataTable
-          data={overdueListData ? overdueListData : []}
-          columns={columns}
-          options={options}
-        />
+        <MUIDataTable data={filteredData} columns={columns} options={options} />
       </div>
     </Layout>
   );

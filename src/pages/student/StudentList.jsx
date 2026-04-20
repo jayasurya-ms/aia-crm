@@ -2,21 +2,27 @@ import { CircularProgress } from "@mui/material";
 import axios from "axios";
 import moment from "moment";
 import MUIDataTable from "mui-datatables";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import BASE_URL from "../../base/BaseUrl";
 import { StudentView } from "../../components/buttonIndex/ButtonComponents";
 import Layout from "../../layout/Layout";
+import { Input } from "@material-tailwind/react";
 
 const StudentList = () => {
   const [studentListData, setStudentListData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [enquiryDate, setEnquiryDate] = useState(
+    localStorage.getItem("enquiry_date_student_filter") || "",
+  );
+  const [regDate, setRegDate] = useState(
+    localStorage.getItem("reg_date_student_filter") || "",
+  );
   const navigate = useNavigate();
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
-       
         setLoading(true);
         const token = localStorage.getItem("token");
         const response = await axios.get(
@@ -25,7 +31,7 @@ const StudentList = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         const res = response.data?.student;
@@ -142,6 +148,21 @@ const StudentList = () => {
       },
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!studentListData) return [];
+    return studentListData.filter((item) => {
+      const matchesEnquiryDate = enquiryDate
+        ? moment(item.enquiry_date).format("YYYY-MM-DD") === enquiryDate
+        : true;
+      const matchesRegDate = regDate
+        ? moment(item.registration_date).format("YYYY-MM-DD") === regDate
+        : true;
+
+      return matchesEnquiryDate && matchesRegDate;
+    });
+  }, [studentListData, enquiryDate, regDate]);
+
   const options = {
     selectableRows: "none",
     elevation: 0,
@@ -192,13 +213,49 @@ const StudentList = () => {
               Student List
             </h3>
 
-            {/* <button onClick={emailnotification} className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md">
-              Month End Email Notification
-            </button> */}
+            <div className="flex gap-4">
+              <Input
+                label="Enquiry Date"
+                type="date"
+                max={moment().format("YYYY-MM-DD")}
+                value={enquiryDate}
+                onChange={(e) => {
+                  setEnquiryDate(e.target.value);
+                  localStorage.setItem(
+                    "enquiry_date_student_filter",
+                    e.target.value,
+                  );
+                }}
+              ></Input>
+              <Input
+                label="Registration Date"
+                type="date"
+                max={moment().format("YYYY-MM-DD")}
+                value={regDate}
+                onChange={(e) => {
+                  setRegDate(e.target.value);
+                  localStorage.setItem(
+                    "reg_date_student_filter",
+                    e.target.value,
+                  );
+                }}
+              ></Input>
+              <button
+                onClick={() => {
+                  setEnquiryDate("");
+                  setRegDate("");
+                  localStorage.removeItem("enquiry_date_student_filter");
+                  localStorage.removeItem("reg_date_student_filter");
+                }}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+              >
+                Clear
+              </button>
+            </div>
           </div>
           <div className="mt-5">
             <MUIDataTable
-              data={studentListData ? studentListData : []}
+              data={filteredData ? filteredData : []}
               columns={columns}
               options={options}
             />

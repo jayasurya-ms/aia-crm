@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Layout from "../../../layout/Layout";
 import DeliveryFilter from "../../../components/DeliveryFilter";
 import { ContextPanel } from "../../../utils/ContextPanel";
@@ -19,19 +19,28 @@ import {
 } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import { DeliveryDeliverdCreate, DeliveryDeliverdEdit, DeliveryDeliverdView, DeliveryDeliViewWhatsapp, DeliveryPenViewWhatsapp } from "../../../components/buttonIndex/ButtonComponents";
-
-
-
+import {
+  DeliveryDeliverdCreate,
+  DeliveryDeliverdEdit,
+  DeliveryDeliverdView,
+  DeliveryDeliViewWhatsapp,
+} from "../../../components/buttonIndex/ButtonComponents";
 
 import {
   ButtonCreate,
   IconsBackground,
 } from "../../../components/common/ButtonCss";
+import { Input } from "@material-tailwind/react";
 
 const DeliveredListDelivery = () => {
   const [deliveredDListData, setDeliveredDListData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [shippingDate, setShippingDate] = useState(
+    localStorage.getItem("shipping_closed_date_filter") || "",
+  );
+  const [deliveryDate, setDeliveryDate] = useState(
+    localStorage.getItem("delivery_closed_date_filter") || "",
+  );
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -55,7 +64,7 @@ const DeliveredListDelivery = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
       setStudentNew(res.data.student);
       setStudentDelivery(res.data.studentDelivery);
@@ -93,7 +102,7 @@ const DeliveredListDelivery = () => {
     Office No: 0129-417-4177\n
     Toll free: 1800-1200-2555`;
     const whatsappLink = `https://wa.me/${code}${phoneNumber}?text=${encodeURIComponent(
-      message
+      message,
     )}`;
 
     let data = {
@@ -130,7 +139,7 @@ const DeliveredListDelivery = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         const res = response.data?.delivery;
         if (Array.isArray(res)) {
@@ -276,6 +285,22 @@ const DeliveredListDelivery = () => {
       },
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!deliveredDListData) return [];
+    return deliveredDListData.filter((item) => {
+      const matchesShippingDate = shippingDate
+        ? moment(item.delivery_shipping_date).format("YYYY-MM-DD") ===
+          shippingDate
+        : true;
+      const matchesDeliveryDate = deliveryDate
+        ? moment(item.delivery_date).format("YYYY-MM-DD") === deliveryDate
+        : true;
+
+      return matchesShippingDate && matchesDeliveryDate;
+    });
+  }, [deliveredDListData, shippingDate, deliveryDate]);
+
   const options = {
     selectableRows: "none",
     elevation: 0,
@@ -300,12 +325,46 @@ const DeliveredListDelivery = () => {
             Delivered List
           </h3>
 
-          {/* <Link
-            to="/add-delivery"
-            className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
-          >
-            + Add Delivery
-          </Link> */}
+          <div className="flex gap-4">
+            <Input
+              label="Shipping Date"
+              type="date"
+              max={moment().format("YYYY-MM-DD")}
+              value={shippingDate}
+              onChange={(e) => {
+                setShippingDate(e.target.value);
+                localStorage.setItem(
+                  "shipping_closed_date_filter",
+                  e.target.value,
+                );
+              }}
+            ></Input>
+            <Input
+              label="Delivery Date"
+              type="date"
+              max={moment().format("YYYY-MM-DD")}
+              value={deliveryDate}
+              onChange={(e) => {
+                setDeliveryDate(e.target.value);
+                localStorage.setItem(
+                  "delivery_closed_date_filter",
+                  e.target.value,
+                );
+              }}
+            ></Input>
+            <button
+              onClick={() => {
+                setShippingDate("");
+                setDeliveryDate("");
+                localStorage.removeItem("shipping_closed_date_filter");
+                localStorage.removeItem("delivery_closed_date_filter");
+              }}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg"
+            >
+              Clear
+            </button>
+          </div>
+
           <DeliveryDeliverdCreate
             onClick={() => navigate(`/add-delivery`)}
             className={ButtonCreate}
@@ -313,7 +372,7 @@ const DeliveredListDelivery = () => {
         </div>
         <div className="mt-5">
           <MUIDataTable
-            data={deliveredDListData ? deliveredDListData : []}
+            data={filteredData ? filteredData : []}
             columns={columns}
             options={options}
           />
@@ -343,7 +402,8 @@ const DeliveredListDelivery = () => {
                   </button> */}
                   <DeliveryDeliViewWhatsapp
                     onClick={whatsApp}
-                    className={IconsBackground}  />
+                    className={IconsBackground}
+                  />
                 </Tooltip>
                 <Tooltip title="Close">
                   <button
@@ -399,7 +459,7 @@ const DeliveredListDelivery = () => {
                       :{" "}
                       {student.delivery_shipping_date
                         ? moment(student.delivery_shipping_date).format(
-                            "DD-MM-YYYY"
+                            "DD-MM-YYYY",
                           )
                         : "N/A"}
                     </td>
