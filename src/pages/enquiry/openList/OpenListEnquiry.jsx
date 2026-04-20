@@ -2,9 +2,10 @@ import { CircularProgress } from "@mui/material";
 import axios from "axios";
 import moment from "moment";
 import MUIDataTable from "mui-datatables";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BASE_URL from "../../../base/BaseUrl";
+import { Input } from "@material-tailwind/react";
 import {
   EnquiryOpenCreate,
   EnquiryOpenEdit,
@@ -17,6 +18,12 @@ import Layout from "../../../layout/Layout";
 const OpenListEnquiry = () => {
   const [openListData, setOpenListData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [enquiryDate, setEnquiryDate] = useState(
+    localStorage.getItem("enquiry_date_filter") || "",
+  );
+  const [followupDate, setFollowupDate] = useState(
+    localStorage.getItem("followup_date_filter") || "",
+  );
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
@@ -31,7 +38,7 @@ const OpenListEnquiry = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         setOpenListData(response.data?.enquiry);
@@ -58,7 +65,7 @@ const OpenListEnquiry = () => {
       name: "enquiry_date",
       label: "Enquiry Date",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRender: (value) => {
           return moment(value).format("DD-MM-YYYY");
@@ -69,7 +76,7 @@ const OpenListEnquiry = () => {
       name: "enquiry_follow_date",
       label: "Followup Date",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRender: (value) => {
           return moment(value).format("DD-MM-YYYY");
@@ -163,6 +170,21 @@ const OpenListEnquiry = () => {
       },
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!openListData) return [];
+    return openListData.filter((item) => {
+      const matchesEnquiryDate = enquiryDate
+        ? moment(item.enquiry_date).format("YYYY-MM-DD") === enquiryDate
+        : true;
+      const matchesFollowupDate = followupDate
+        ? moment(item.enquiry_follow_date).format("YYYY-MM-DD") === followupDate
+        : true;
+
+      return matchesEnquiryDate && matchesFollowupDate;
+    });
+  }, [openListData, enquiryDate, followupDate]);
+
   const options = {
     selectableRows: "none",
     elevation: 0,
@@ -197,13 +219,39 @@ const OpenListEnquiry = () => {
         <h3 className="text-center md:text-left text-lg md:text-xl font-bold">
           Enquiry Open List
         </h3>
-
-        {/* <button
-          onClick={handleOpenButton}
-          className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
-        >
-          + Add Enquiry
-        </button> */}
+        <div className="flex gap-4">
+          <Input
+            label="Enquiry Date"
+            type="date"
+            max={moment().format("YYYY-MM-DD")}
+            value={enquiryDate}
+            onChange={(e) => {
+              setEnquiryDate(e.target.value);
+              localStorage.setItem("enquiry_date_filter", e.target.value);
+            }}
+          ></Input>
+          <Input
+            label="Followup Date"
+            type="date"
+            max={moment().format("YYYY-MM-DD")}
+            value={followupDate}
+            onChange={(e) => {
+              setFollowupDate(e.target.value);
+              localStorage.setItem("followup_date_filter", e.target.value);
+            }}
+          ></Input>
+          <button
+            onClick={() => {
+              setEnquiryDate("");
+              setFollowupDate("");
+              localStorage.removeItem("enquiry_date_filter");
+              localStorage.removeItem("followup_date_filter");
+            }}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg"
+          >
+            Clear
+          </button>
+        </div>
         <EnquiryOpenCreate
           onClick={handleOpenButton}
           className={ButtonCreate}
@@ -222,7 +270,7 @@ const OpenListEnquiry = () => {
       ) : (
         <div className="mt-5">
           <MUIDataTable
-            data={openListData ? openListData : []}
+            data={filteredData}
             columns={columns}
             options={options}
           />

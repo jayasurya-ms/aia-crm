@@ -1,15 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Layout from "../../../layout/Layout";
 import RequestFilter from "../../../components/RequestFilter";
 import { ContextPanel } from "../../../utils/ContextPanel";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../../base/BaseUrl";
-import { MdEdit } from "react-icons/md";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
 import MUIDataTable from "mui-datatables";
 import moment from "moment";
-import { Clear, Done } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 import { toast } from "react-toastify";
 import {
@@ -18,10 +15,14 @@ import {
   RequestApprovedCreate,
 } from "../../../components/buttonIndex/ButtonComponents";
 import { ButtonCreate } from "../../../components/common/ButtonCss";
+import { Input } from "@material-tailwind/react";
 
 const ApprovedListRequest = () => {
   const [approvedRListData, setApprovedRListData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [requestDate, setRequestDate] = useState(
+    localStorage.getItem("request_date_approved_filter") || "",
+  );
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
 
@@ -85,7 +86,7 @@ const ApprovedListRequest = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         const res = response.data?.urequest;
@@ -193,6 +194,18 @@ const ApprovedListRequest = () => {
       },
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!approvedRListData) return [];
+    return approvedRListData.filter((item) => {
+      const matchesRequestDate = requestDate
+        ? moment(item.course_request_date).format("YYYY-MM-DD") == requestDate
+        : true;
+
+      return matchesRequestDate;
+    });
+  }, [approvedRListData, requestDate]);
+
   const options = {
     selectableRows: "none",
     elevation: 0,
@@ -217,9 +230,31 @@ const ApprovedListRequest = () => {
           Request Approved List
         </h3>
 
-        {/* <Link to="/add-request" className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md">
-          + Add Request
-        </Link> */}
+        <div className="flex gap-4">
+          <Input
+            label="Date"
+            type="date"
+            max={moment().format("YYYY-MM-DD")}
+            value={requestDate}
+            onChange={(e) => {
+              setRequestDate(e.target.value);
+              localStorage.setItem(
+                "request_date_approved_filter",
+                e.target.value,
+              );
+            }}
+          ></Input>
+          <button
+            onClick={() => {
+              setRequestDate("");
+              localStorage.removeItem("request_date_approved_filter");
+            }}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg"
+          >
+            Clear
+          </button>
+        </div>
+
         <RequestApprovedCreate
           className={ButtonCreate}
           onClick={() => navigate("/add-request")}
@@ -227,7 +262,7 @@ const ApprovedListRequest = () => {
       </div>
       <div className="mt-5">
         <MUIDataTable
-          data={approvedRListData ? approvedRListData : []}
+          data={filteredData ? filteredData : []}
           columns={columns}
           options={options}
         />

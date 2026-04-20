@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Check,
   Edit,
@@ -20,7 +21,7 @@ const getStaticPermissions = () => {
   } catch (error) {
     console.error(
       "Error parsing StaticPermission data from localStorage",
-      error
+      error,
     );
     return [];
   }
@@ -41,7 +42,7 @@ export const CountryCreate = ({ onClick, className }) => {
 };
 CountryCreate.page = "Country";
 
-export const CountryEdit = ({ onClick, className }) => {
+export const CountryEdit = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "CountryEdit", staticPermissions)) {
@@ -49,11 +50,17 @@ export const CountryEdit = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="Edit Country">
+    <button
+      ref={ref}
+      onClick={onClick}
+      className={className}
+      title="Edit Country"
+      {...props}
+    >
       <Edit className="h-4 w-4" />
     </button>
   );
-};
+});
 
 CountryEdit.page = "Country";
 
@@ -74,7 +81,7 @@ export const CoursesCreate = ({ onClick, className }) => {
 };
 CoursesCreate.page = "Courses";
 
-export const CoursesEdit = ({ onClick, className }) => {
+export const CoursesEdit = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "CoursesEdit", staticPermissions)) {
@@ -82,11 +89,17 @@ export const CoursesEdit = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="Edit Courses">
+    <button
+      ref={ref}
+      onClick={onClick}
+      className={className}
+      title="Edit Courses"
+      {...props}
+    >
       <Edit className="h-4 w-4" />
     </button>
   );
-};
+});
 
 CoursesEdit.page = "Courses";
 
@@ -106,7 +119,7 @@ export const EnquiryOpenCreate = ({ onClick, className }) => {
   );
 };
 EnquiryOpenCreate.page = "Enquiry";
-export const EnquiryViewSendMail = ({ onClick, className }) => {
+export const EnquiryViewSendMail = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "EnquiryViewSendMail", staticPermissions)) {
@@ -114,14 +127,14 @@ export const EnquiryViewSendMail = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className}>
+    <button ref={ref} onClick={onClick} className={className} {...props}>
       <MdEmail className="h-4 w-4 mr-2" />
       Send Mail
     </button>
   );
-};
+});
 EnquiryViewSendMail.page = "Enquiry";
-export const EnquiryViewWhatsapp = ({ onClick, className }) => {
+export const EnquiryViewWhatsapp = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "EnquiryViewWhatsapp", staticPermissions)) {
@@ -129,14 +142,14 @@ export const EnquiryViewWhatsapp = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className}>
+    <button ref={ref} onClick={onClick} className={className} {...props}>
       <FaWhatsapp className="h-4 w-4 mr-2 " /> Whatsapp
     </button>
   );
-};
+});
 EnquiryViewWhatsapp.page = "Enquiry";
 
-export const EnquiryOpenEdit = ({ onClick, className }) => {
+export const EnquiryOpenEdit = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "EnquiryOpenEdit", staticPermissions)) {
@@ -144,14 +157,14 @@ export const EnquiryOpenEdit = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="Edit ">
+    <button ref={ref} onClick={onClick} className={className} title="Edit " {...props}>
       <Edit className="h-4 w-4" />
     </button>
   );
-};
+});
 
 EnquiryOpenEdit.page = "Enquiry";
-export const FollowUpEdit = ({ onClick, className }) => {
+export const FollowUpEdit = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "FollowUpEdit", staticPermissions)) {
@@ -159,15 +172,21 @@ export const FollowUpEdit = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="Edit Follow Up">
+    <button
+      ref={ref}
+      onClick={onClick}
+      className={className}
+      title="Edit Follow Up"
+      {...props}
+    >
       <Edit className="h-4 w-4" />
     </button>
   );
-};
+});
 
 FollowUpEdit.page = "Enquiry";
 
-export const EnquiryOpenView = ({ onClick, className }) => {
+export const EnquiryOpenView = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "EnquiryOpenView", staticPermissions)) {
@@ -175,11 +194,11 @@ export const EnquiryOpenView = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="View ">
+    <button ref={ref} onClick={onClick} className={className} title="View " {...props}>
       <Eye className="h-4 w-4 " />
     </button>
   );
-};
+});
 
 EnquiryOpenView.page = "Enquiry";
 
@@ -212,7 +231,7 @@ export const EnquiryCloseCreate = ({ onClick, className }) => {
 };
 EnquiryCloseCreate.page = "Enquiry";
 
-export const EnquiryCloseEdit = ({ onClick, className }) => {
+export const EnquiryCloseEdit = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "EnquiryCloseEdit", staticPermissions)) {
@@ -220,15 +239,15 @@ export const EnquiryCloseEdit = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="Edit ">
+    <button ref={ref} onClick={onClick} className={className} title="Edit " {...props}>
       <Edit className="h-4 w-4" />
     </button>
   );
-};
+});
 
 EnquiryCloseEdit.page = "Enquiry";
 
-export const EnquiryCloseView = ({ onClick, className }) => {
+export const EnquiryCloseView = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "EnquiryCloseView", staticPermissions)) {
@@ -236,49 +255,65 @@ export const EnquiryCloseView = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="View ">
+    <button ref={ref} onClick={onClick} className={className} title="View " {...props}>
       <Eye className="h-4 w-4 " />
     </button>
   );
-};
+});
 
 EnquiryCloseView.page = "Enquiry";
 
-export const EnquiryOverDueEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "EnquiryOverDueEdit", staticPermissions)) {
-    return null;
-  }
+export const EnquiryOverDueEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "EnquiryOverDueEdit", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit OverDue">
-      <Edit className="h-4 w-4" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit OverDue"
+        {...props}
+      >
+        <Edit className="h-4 w-4" />
+      </button>
+    );
+  }
+);
 
 EnquiryOverDueEdit.page = "Enquiry";
 
-export const EnquiryOverDueView = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "EnquiryOverDueView", staticPermissions)) {
-    return null;
-  }
+export const EnquiryOverDueView = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "EnquiryOverDueView", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="View OverDue">
-      <Eye className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="View OverDue"
+        {...props}
+      >
+        <Eye className="h-4 w-4 " />
+      </button>
+    );
+  }
+);
 
 EnquiryOverDueView.page = "Enquiry";
 
 /*------------------------------------Student--------------------- */
 
-export const StudentView = ({ onClick, className }) => {
+export const StudentView = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "StudentView", staticPermissions)) {
@@ -286,11 +321,17 @@ export const StudentView = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="View Student">
+    <button
+      ref={ref}
+      onClick={onClick}
+      className={className}
+      title="View Student"
+      {...props}
+    >
       <Eye className="h-4 w-4 " />
     </button>
   );
-};
+});
 
 StudentView.page = "Student";
 
@@ -365,176 +406,266 @@ export const StudentViewVieEnquiry = ({ onClick, className }) => {
 };
 StudentViewVieEnquiry.page = "Student";
 
-export const StdViewCourseEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewCourseEdit", staticPermissions)) {
-    return null;
-  }
+export const StdViewCourseEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "StdViewCourseEdit", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit ">
-      <Edit className="h-5 w-5" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit "
+        {...props}
+      >
+        <Edit className="h-5 w-5" />
+      </button>
+    );
+  }
+);
 
 StdViewCourseEdit.page = "Student";
 
-export const StdViewCourseView = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewCourseView", staticPermissions)) {
-    return null;
-  }
+export const StdViewCourseView = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "StdViewCourseView", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="View">
-      <Eye className="h-5 w-5 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="View"
+        {...props}
+      >
+        <Eye className="h-5 w-5 " />
+      </button>
+    );
+  }
+);
 
 StdViewCourseView.page = "Student";
 
-export const StdViewDeliveryEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewDeliveryEdit", staticPermissions)) {
-    return null;
-  }
+export const StdViewDeliveryEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "StdViewDeliveryEdit", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit ">
-      <Edit className="h-5 w-5" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit "
+        {...props}
+      >
+        <Edit className="h-5 w-5" />
+      </button>
+    );
+  }
+);
 
 StdViewDeliveryEdit.page = "Student";
 
-export const StdViewDeliveryView = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewDeliveryView", staticPermissions)) {
-    return null;
-  }
+export const StdViewDeliveryView = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "StdViewDeliveryView", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="View">
-      <Eye className="h-5 w-5  " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="View"
+        {...props}
+      >
+        <Eye className="h-5 w-5  " />
+      </button>
+    );
+  }
+);
 
 StdViewDeliveryView.page = "Student";
-export const StdViewDeliveryWhatsapp = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewDeliveryWhatsapp", staticPermissions)) {
-    return null;
-  }
+export const StdViewDeliveryWhatsapp = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (
+      !checkPermission(userId, "StdViewDeliveryWhatsapp", staticPermissions)
+    ) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Whatsapp">
-      <FaWhatsapp className="h-5 w-5  " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Whatsapp"
+        {...props}
+      >
+        <FaWhatsapp className="h-5 w-5  " />
+      </button>
+    );
+  }
+);
 
 StdViewDeliveryWhatsapp.page = "Student";
 
-export const StdViewExamEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewExamEdit", staticPermissions)) {
-    return null;
-  }
+export const StdViewExamEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "StdViewExamEdit", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit ">
-      <Edit className="h-5 w-5" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit "
+        {...props}
+      >
+        <Edit className="h-5 w-5" />
+      </button>
+    );
+  }
+);
 
 StdViewExamEdit.page = "Student";
 
-export const StdViewExamView = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewExamView", staticPermissions)) {
-    return null;
-  }
+export const StdViewExamView = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "StdViewExamView", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="View">
-      <Eye className="h-5 w-5 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="View"
+        {...props}
+      >
+        <Eye className="h-5 w-5 " />
+      </button>
+    );
+  }
+);
 
 StdViewExamView.page = "Student";
 
-export const StdViewResultEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewResultEdit", staticPermissions)) {
-    return null;
-  }
+export const StdViewResultEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "StdViewResultEdit", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit ">
-      <Edit className="h-5 w-5" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit "
+        {...props}
+      >
+        <Edit className="h-5 w-5" />
+      </button>
+    );
+  }
+);
 
 StdViewResultEdit.page = "Student";
 
-export const StdViewResultView = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewResultView", staticPermissions)) {
-    return null;
-  }
+export const StdViewResultView = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "StdViewResultView", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="View">
-      <Eye className="h-5 w-5 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="View"
+        {...props}
+      >
+        <Eye className="h-5 w-5 " />
+      </button>
+    );
+  }
+);
 
 StdViewResultView.page = "Student";
-export const StdViewResultWhatsapp = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewResultWhatsapp", staticPermissions)) {
-    return null;
-  }
+export const StdViewResultWhatsapp = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "StdViewResultWhatsapp", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Whatsapp">
-      <FaWhatsapp className="h-5 w-5 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Whatsapp"
+        {...props}
+      >
+        <FaWhatsapp className="h-5 w-5 " />
+      </button>
+    );
+  }
+);
 
 StdViewResultWhatsapp.page = "Student";
-export const StdViewResultMail = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "StdViewResultMail", staticPermissions)) {
-    return null;
-  }
+export const StdViewResultMail = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "StdViewResultMail", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Mail">
-      <Mail className="h-5 w-5 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Mail"
+        {...props}
+      >
+        <Mail className="h-5 w-5 " />
+      </button>
+    );
+  }
+);
 
 StdViewResultMail.page = "Student";
 
@@ -555,73 +686,101 @@ export const DeliveryPendingCreate = ({ onClick, className }) => {
 };
 DeliveryPendingCreate.page = "Delivery";
 
-export const DeliveryPendingEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "DeliveryPendingEdit", staticPermissions)) {
-    return null;
-  }
+export const DeliveryPendingEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "DeliveryPendingEdit", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit Pending">
-      <Edit className="h-4 w-4" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit Pending"
+        {...props}
+      >
+        <Edit className="h-4 w-4" />
+      </button>
+    );
+  }
+);
 
 DeliveryPendingEdit.page = "Delivery";
 
-export const DeliveryPenViewWhatsapp = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "DeliveryPenViewWhatsapp", staticPermissions)) {
-    return null;
-  }
+export const DeliveryPenViewWhatsapp = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (
+      !checkPermission(userId, "DeliveryPenViewWhatsapp", staticPermissions)
+    ) {
+      return null;
+    }
 
-  return (
-    <button
-      onClick={onClick}
-      className={className}
-      title="On Conversion to Registered"
-    >
-      <FaWhatsapp className="h-5 w-5 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="On Conversion to Registered"
+        {...props}
+      >
+        <FaWhatsapp className="h-5 w-5 " />
+      </button>
+    );
+  },
+);
 
 DeliveryPenViewWhatsapp.page = "Delivery";
-export const DeliveryDeliViewWhatsapp = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "DeliveryDeliViewWhatsapp", staticPermissions)) {
-    return null;
-  }
+export const DeliveryDeliViewWhatsapp = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (
+      !checkPermission(userId, "DeliveryDeliViewWhatsapp", staticPermissions)
+    ) {
+      return null;
+    }
 
-  return (
-    <button
-      onClick={onClick}
-      className={className}
-      title="On Conversion to Registered"
-    >
-      <FaWhatsapp className="h-5 w-5 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="On Conversion to Registered"
+        {...props}
+      >
+        <FaWhatsapp className="h-5 w-5 " />
+      </button>
+    );
+  },
+);
 
 DeliveryDeliViewWhatsapp.page = "Delivery";
-export const DeliveryPendingView = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "DeliveryPendingView", staticPermissions)) {
-    return null;
-  }
+export const DeliveryPendingView = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "DeliveryPendingView", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="View Pending">
-      <Eye className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="View Pending"
+        {...props}
+      >
+        <Eye className="h-4 w-4 " />
+      </button>
+    );
+  }
+);
 
 DeliveryPendingView.page = "Delivery";
 
@@ -640,35 +799,51 @@ export const DeliveryDeliverdCreate = ({ onClick, className }) => {
 };
 DeliveryDeliverdCreate.page = "Delivery";
 
-export const DeliveryDeliverdEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "DeliveryDeliverdEdit", staticPermissions)) {
-    return null;
-  }
+export const DeliveryDeliverdEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "DeliveryDeliverdEdit", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit Deliverd">
-      <Edit className="h-4 w-4" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit Deliverd"
+        {...props}
+      >
+        <Edit className="h-4 w-4" />
+      </button>
+    );
+  }
+);
 
 DeliveryDeliverdEdit.page = "Delivery";
 
-export const DeliveryDeliverdView = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "DeliveryDeliverdView", staticPermissions)) {
-    return null;
-  }
+export const DeliveryDeliverdView = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "DeliveryDeliverdView", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="View Deliverd">
-      <Eye className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="View Deliverd"
+        {...props}
+      >
+        <Eye className="h-4 w-4 " />
+      </button>
+    );
+  }
+);
 
 DeliveryDeliverdView.page = "Delivery";
 //Class
@@ -688,7 +863,7 @@ export const ClassCreate = ({ onClick, className }) => {
 ClassCreate.page = "Class";
 
 //View
-export const ClassView = ({ onClick, className }) => {
+export const ClassView = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "ClassView", staticPermissions)) {
@@ -696,15 +871,15 @@ export const ClassView = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="View">
+    <button ref={ref} onClick={onClick} className={className} title="View" {...props}>
       <Eye className="h-4 w-4" />
     </button>
   );
-};
+});
 
 ClassView.page = "Class";
 //edit
-export const ClassEdit = ({ onClick, className }) => {
+export const ClassEdit = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "ClassEdit", staticPermissions)) {
@@ -712,16 +887,16 @@ export const ClassEdit = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="Edit">
+    <button ref={ref} onClick={onClick} className={className} title="Edit" {...props}>
       <Edit className="h-4 w-4" />
     </button>
   );
-};
+});
 
 ClassEdit.page = "Class";
 //mail
 
-export const ClassMail = ({ onClick, className }) => {
+export const ClassMail = React.forwardRef(({ onClick, className, ...props }, ref) => {
   const userId = localStorage.getItem("id") || "";
   const staticPermissions = getStaticPermissions();
   if (!checkPermission(userId, "ClassMail", staticPermissions)) {
@@ -729,61 +904,91 @@ export const ClassMail = ({ onClick, className }) => {
   }
 
   return (
-    <button onClick={onClick} className={className} title="Send Mail">
+    <button
+      ref={ref}
+      onClick={onClick}
+      className={className}
+      title="Send Mail"
+      {...props}
+    >
       <Mail className="h-4 w-4 " />
     </button>
   );
-};
+});
 
 ClassMail.page = "Class";
 // ClassWhatsapp;
-export const ClassWhatsapp = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "ClassWhatsapp", staticPermissions)) {
-    return null;
-  }
+export const ClassWhatsapp = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "ClassWhatsapp", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Whatsapp">
-      <FaWhatsapp className="h-4 w-4" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Whatsapp"
+        {...props}
+      >
+        <FaWhatsapp className="h-4 w-4" />
+      </button>
+    );
+  }
+);
 
 ClassWhatsapp.page = "Class";
 //ClassSendNotification
 
-export const ClassSendNotification = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "ClassSendNotification", staticPermissions)) {
-    return null;
-  }
+export const ClassSendNotification = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "ClassSendNotification", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Send Notification">
-      <MessageSquareShare className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Send Notification"
+        {...props}
+      >
+        <MessageSquareShare className="h-4 w-4 " />
+      </button>
+    );
+  }
+);
 
 ClassSendNotification.page = "Class";
 //ClassAddAttendance
 
-export const ClassAddAttendance = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "ClassAddAttendance", staticPermissions)) {
-    return null;
-  }
+export const ClassAddAttendance = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "ClassAddAttendance", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="AddAttendance">
-      <UserPlus className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="AddAttendance"
+        {...props}
+      >
+        <UserPlus className="h-4 w-4 " />
+      </button>
+    );
+  }
+);
 
 ClassAddAttendance.page = "Class";
 //class iside view
@@ -804,49 +1009,75 @@ export const ClassViewSendEmailNotAttend = ({ onClick, className }) => {
 };
 
 ClassViewSendEmailNotAttend.page = "Class";
-export const ClassViewAddtoAttend = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "ClassViewAddtoAttend", staticPermissions)) {
-    return null;
-  }
+export const ClassViewAddtoAttend = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "ClassViewAddtoAttend", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="AddtoAttend">
-      <User className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="AddtoAttend"
+        {...props}
+      >
+        <User className="h-4 w-4 " />
+      </button>
+    );
+  },
+);
 
 ClassViewAddtoAttend.page = "Class";
-export const ClassViewAddtoNotAttend = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "ClassViewAddtoNotAttend", staticPermissions)) {
-    return null;
-  }
+export const ClassViewAddtoNotAttend = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (
+      !checkPermission(userId, "ClassViewAddtoNotAttend", staticPermissions)
+    ) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="AddtoNotAttend">
-      <UserPlus className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="AddtoNotAttend"
+        {...props}
+      >
+        <UserPlus className="h-4 w-4 " />
+      </button>
+    );
+  },
+);
 
 ClassViewAddtoNotAttend.page = "Class";
-export const ClassViewMissedCalls = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "ClassViewMissedCalls", staticPermissions)) {
-    return null;
-  }
+export const ClassViewMissedCalls = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "ClassViewMissedCalls", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="MissedCalls">
-      <FaWhatsapp className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="MissedCalls"
+        {...props}
+      >
+        <FaWhatsapp className="h-4 w-4 " />
+      </button>
+    );
+  },
+);
 
 ClassViewMissedCalls.page = "Class";
 
@@ -896,35 +1127,53 @@ export const RequestApprovedCreate = ({ onClick, className }) => {
 };
 RequestApprovedCreate.page = "Request";
 
-export const RequestApprovedCompleted = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "RequestApprovedCompleted", staticPermissions)) {
-    return null;
-  }
+export const RequestApprovedCompleted = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (
+      !checkPermission(userId, "RequestApprovedCompleted", staticPermissions)
+    ) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="ApprovedCompleted">
-      <Check className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="ApprovedCompleted"
+        {...props}
+      >
+        <Check className="h-4 w-4 " />
+      </button>
+    );
+  },
+);
 
 RequestApprovedCompleted.page = "Request";
 
-export const RequestApprovedCancel = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "RequestApprovedCancel", staticPermissions)) {
-    return null;
-  }
+export const RequestApprovedCancel = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "RequestApprovedCancel", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="ApprovedCancel">
-      <X className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="ApprovedCancel"
+        {...props}
+      >
+        <X className="h-4 w-4 " />
+      </button>
+    );
+  },
+);
 
 RequestApprovedCancel.page = "Request";
 // //////////////////////////Request Pending--------------------
@@ -943,65 +1192,99 @@ export const RequestCompletedCreate = ({ onClick, className }) => {
 };
 RequestCompletedCreate.page = "Request";
 
-export const RequestPendingEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "RequestPendingEdit", staticPermissions)) {
-    return null;
-  }
+export const RequestPendingEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "RequestPendingEdit", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit">
-      <Edit className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit"
+        {...props}
+      >
+        <Edit className="h-4 w-4 " />
+      </button>
+    );
+  }
+);
 
 RequestPendingEdit.page = "Request";
-export const RequestPendingView = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "RequestPendingView", staticPermissions)) {
-    return null;
-  }
+export const RequestPendingView = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "RequestPendingView", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="View">
-      <View className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="View"
+        {...props}
+      >
+        <View className="h-4 w-4 " />
+      </button>
+    );
+  }
+);
 
 RequestPendingView.page = "Request";
-export const RequestPendingCompleted = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "RequestPendingCompleted", staticPermissions)) {
-    return null;
-  }
+export const RequestPendingCompleted = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (
+      !checkPermission(userId, "RequestPendingCompleted", staticPermissions)
+    ) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="ApprovedCompleted">
-      <Check className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="ApprovedCompleted"
+        {...props}
+      >
+        <Check className="h-4 w-4 " />
+      </button>
+    );
+  },
+);
 
 RequestPendingCompleted.page = "Request";
 
-export const RequestPendingCancel = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "RequestPendingCancel", staticPermissions)) {
-    return null;
-  }
+export const RequestPendingCancel = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "RequestPendingCancel", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="ApprovedCancel">
-      <X className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="ApprovedCancel"
+        {...props}
+      >
+        <X className="h-4 w-4 " />
+      </button>
+    );
+  },
+);
 
 RequestPendingCancel.page = "Request";
 
@@ -1025,21 +1308,29 @@ export const TaskManagerRepetitiveCreate = ({ onClick, className }) => {
 };
 TaskManagerRepetitiveCreate.page = "Task Manager";
 
-export const TaskManagerRepetitiveEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (
-    !checkPermission(userId, "TaskManagerRepetitiveEdit", staticPermissions)
-  ) {
-    return null;
-  }
+export const TaskManagerRepetitiveEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (
+      !checkPermission(userId, "TaskManagerRepetitiveEdit", staticPermissions)
+    ) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Update">
-      <Edit className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Update"
+        {...props}
+      >
+        <Edit className="h-4 w-4 " />
+      </button>
+    );
+  }
+);
 
 TaskManagerRepetitiveEdit.page = "Task Manager";
 // // Pending
@@ -1050,7 +1341,7 @@ export const TaskManagerPendingCreateRepetitive = ({ onClick, className }) => {
     !checkPermission(
       userId,
       "TaskManagerPendingCreateRepetitive",
-      staticPermissions
+      staticPermissions,
     )
   ) {
     return null;
@@ -1080,19 +1371,27 @@ export const TaskManagerPendingCreateTask = ({ onClick, className }) => {
 };
 TaskManagerPendingCreateTask.page = "Task Manager";
 
-export const TaskManagerPendingEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "TaskManagerPendingEdit", staticPermissions)) {
-    return null;
-  }
+export const TaskManagerPendingEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "TaskManagerPendingEdit", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit">
-      <Edit className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit"
+        {...props}
+      >
+        <Edit className="h-4 w-4 " />
+      </button>
+    );
+  }
+);
 
 TaskManagerPendingEdit.page = "Task Manager";
 // // // Inspection
@@ -1106,7 +1405,7 @@ export const TaskManagerInspectionCreateRepetitive = ({
     !checkPermission(
       userId,
       "TaskManagerInspectionCreateRepetitive",
-      staticPermissions
+      staticPermissions,
     )
   ) {
     return null;
@@ -1126,7 +1425,7 @@ export const TaskManagerInspectionBulkAproveTask = ({ onClick, className }) => {
     !checkPermission(
       userId,
       "TaskManagerInspectionBulkAproveTask",
-      staticPermissions
+      staticPermissions,
     )
   ) {
     return null;
@@ -1146,7 +1445,7 @@ export const TaskManagerRepetativeBulkDeleteTask = ({ onClick, className }) => {
     !checkPermission(
       userId,
       "TaskManagerRepetativeBulkDeleteTask",
-      staticPermissions
+      staticPermissions,
     )
   ) {
     return null;
@@ -1166,7 +1465,7 @@ export const TaskManagerInspectionCreateTask = ({ onClick, className }) => {
     !checkPermission(
       userId,
       "TaskManagerInspectionCreateTask",
-      staticPermissions
+      staticPermissions,
     )
   ) {
     return null;
@@ -1180,21 +1479,29 @@ export const TaskManagerInspectionCreateTask = ({ onClick, className }) => {
 };
 TaskManagerInspectionCreateTask.page = "Task Manager";
 
-export const TaskManagerInspectionEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (
-    !checkPermission(userId, "TaskManagerInspectionEdit", staticPermissions)
-  ) {
-    return null;
-  }
+export const TaskManagerInspectionEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (
+      !checkPermission(userId, "TaskManagerInspectionEdit", staticPermissions)
+    ) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit">
-      <Edit className="h-4 w-4 " />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit"
+        {...props}
+      >
+        <Edit className="h-4 w-4 " />
+      </button>
+    );
+  }
+);
 
 TaskManagerInspectionEdit.page = "Task Manager";
 //// // // Completed
@@ -1208,7 +1515,7 @@ export const TaskManagerCompletedCreateRepetitive = ({
     !checkPermission(
       userId,
       "TaskManagerCompletedCreateRepetitive",
-      staticPermissions
+      staticPermissions,
     )
   ) {
     return null;
@@ -1228,7 +1535,7 @@ export const TaskManagerCompletedCreateTask = ({ onClick, className }) => {
     !checkPermission(
       userId,
       "TaskManagerCompletedCreateTask",
-      staticPermissions
+      staticPermissions,
     )
   ) {
     return null;
@@ -1415,7 +1722,7 @@ export const DownloadAttendanceDownloadAttend = ({ onClick, className }) => {
     !checkPermission(
       userId,
       "DownloadAttendanceDownloadAttend",
-      staticPermissions
+      staticPermissions,
     )
   ) {
     return null;
@@ -1453,7 +1760,7 @@ export const DownloadAttendanceDownloadNotAttend = ({ onClick, className }) => {
     !checkPermission(
       userId,
       "DownloadAttendanceDownloadNotAttend",
-      staticPermissions
+      staticPermissions,
     )
   ) {
     return null;
@@ -1474,7 +1781,7 @@ export const DownloadAttendanceViewNotAttend = ({ onClick, className }) => {
     !checkPermission(
       userId,
       "DownloadAttendanceViewNotAttend",
-      staticPermissions
+      staticPermissions,
     )
   ) {
     return null;
@@ -1489,49 +1796,73 @@ export const DownloadAttendanceViewNotAttend = ({ onClick, className }) => {
 DownloadAttendanceViewNotAttend.page = "Download";
 
 //birthday
-export const BirthDayWhatsaApp = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "BirthDayWhatsaApp", staticPermissions)) {
-    return null;
-  }
+export const BirthDayWhatsaApp = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "BirthDayWhatsaApp", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Whatsapp">
-      <FaWhatsapp className="h-4 w-4" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Whatsapp"
+        {...props}
+      >
+        <FaWhatsapp className="h-4 w-4" />
+      </button>
+    );
+  }
+);
 
 BirthDayWhatsaApp.page = "Birthday";
-export const BirthDayEmail = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "BirthDayEmail", staticPermissions)) {
-    return null;
-  }
+export const BirthDayEmail = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "BirthDayEmail", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Email">
-      <MdOutlineEmail className="h-4 w-4" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Email"
+        {...props}
+      >
+        <MdOutlineEmail className="h-4 w-4" />
+      </button>
+    );
+  }
+);
 
 BirthDayEmail.page = "Birthday";
-export const WebisteEnquiryEdit = ({ onClick, className }) => {
-  const userId = localStorage.getItem("id") || "";
-  const staticPermissions = getStaticPermissions();
-  if (!checkPermission(userId, "WebisteEnquiryEdit", staticPermissions)) {
-    return null;
-  }
+export const WebisteEnquiryEdit = React.forwardRef(
+  ({ onClick, className, ...props }, ref) => {
+    const userId = localStorage.getItem("id") || "";
+    const staticPermissions = getStaticPermissions();
+    if (!checkPermission(userId, "WebisteEnquiryEdit", staticPermissions)) {
+      return null;
+    }
 
-  return (
-    <button onClick={onClick} className={className} title="Edit">
-      <Edit className="h-4 w-4" />
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        onClick={onClick}
+        className={className}
+        title="Edit"
+        {...props}
+      >
+        <Edit className="h-4 w-4" />
+      </button>
+    );
+  }
+);
 
 WebisteEnquiryEdit.page = "Webiste Enquiry";
 /*-----------------------------------Morrthy------------------ */

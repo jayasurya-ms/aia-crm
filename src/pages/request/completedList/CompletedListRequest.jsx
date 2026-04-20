@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Layout from "../../../layout/Layout";
 import RequestFilter from "../../../components/RequestFilter";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,10 +9,14 @@ import { ContextPanel } from "../../../utils/ContextPanel";
 import moment from "moment";
 import { RequestCompletedCreate } from "../../../components/buttonIndex/ButtonComponents";
 import { ButtonCreate } from "../../../components/common/ButtonCss";
+import { Input } from "@material-tailwind/react";
 
 const CompletedListRequest = () => {
   const [completedRListData, setCompletedRListData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [requestDate, setRequestDate] = useState(
+    localStorage.getItem("request_date_completed_filter") || "",
+  );
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
   useEffect(() => {
@@ -30,7 +34,7 @@ const CompletedListRequest = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         const res = response.data?.urequest;
@@ -111,6 +115,18 @@ const CompletedListRequest = () => {
       },
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!completedRListData) return [];
+    return completedRListData.filter((item) => {
+      const matchesRequestDate = requestDate
+        ? moment(item.course_request_date).format("YYYY-MM-DD") === requestDate
+        : true;
+
+      return matchesRequestDate;
+    });
+  }, [completedRListData, requestDate]);
+
   const options = {
     selectableRows: "none",
     elevation: 0,
@@ -127,13 +143,32 @@ const CompletedListRequest = () => {
         <h3 className="text-center md:text-left text-lg md:text-xl font-bold">
           Request Completed List
         </h3>
-        {/* 
-        <Link
-          to="/add-request"
-          className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
-        >
-          + Add Request
-        </Link> */}
+
+        <div className="flex gap-4">
+          <Input
+            label="Date"
+            type="date"
+            max={moment().format("YYYY-MM-DD")}
+            value={requestDate}
+            onChange={(e) => {
+              setRequestDate(e.target.value);
+              localStorage.setItem(
+                "request_date_completed_filter",
+                e.target.value,
+              );
+            }}
+          ></Input>
+          <button
+            onClick={() => {
+              setRequestDate("");
+              localStorage.removeItem("request_date_filter");
+            }}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg"
+          >
+            Clear
+          </button>
+        </div>
+
         <RequestCompletedCreate
           className={ButtonCreate}
           onClick={() => navigate("/add-request")}
@@ -141,7 +176,7 @@ const CompletedListRequest = () => {
       </div>
       <div className="mt-5">
         <MUIDataTable
-          data={completedRListData ? completedRListData : []}
+          data={filteredData ? filteredData : []}
           columns={columns}
           options={options}
         />

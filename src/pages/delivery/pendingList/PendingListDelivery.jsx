@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Layout from "../../../layout/Layout";
 import DeliveryFilter from "../../../components/DeliveryFilter";
 import { ContextPanel } from "../../../utils/ContextPanel";
@@ -19,17 +19,26 @@ import {
 } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import { DeliveryPendingCreate, DeliveryPendingEdit, DeliveryPendingView, DeliveryPenViewWhatsapp } from "../../../components/buttonIndex/ButtonComponents";
+import {
+  DeliveryPendingCreate,
+  DeliveryPendingEdit,
+  DeliveryPendingView,
+  DeliveryPenViewWhatsapp,
+} from "../../../components/buttonIndex/ButtonComponents";
 
 import {
   ButtonCreate,
   IconsBackground,
 } from "../../../components/common/ButtonCss";
+import { Input } from "@material-tailwind/react";
 
 const PendingListDelivery = () => {
   const [pendingDListData, setPendingDListData] = useState(null);
   const [loading, setLoading] = useState(false);
   const { isPanelUp } = useContext(ContextPanel);
+  const [shippingDate, setShippingDate] = useState(
+    localStorage.getItem("delivery_shipping_date_filter") || "",
+  );
   const navigate = useNavigate();
   const [studentnew, setStudentNew] = useState({});
 
@@ -53,7 +62,7 @@ const PendingListDelivery = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
       setStudentNew(res.data.student);
       setStudentDelivery(res.data.studentDelivery);
@@ -91,7 +100,7 @@ const PendingListDelivery = () => {
     Office No: 0129-417-4177\n
     Toll free: 1800-1200-2555`;
     const whatsappLink = `https://wa.me/${code}${phoneNumber}?text=${encodeURIComponent(
-      message
+      message,
     )}`;
 
     let data = {
@@ -128,7 +137,7 @@ const PendingListDelivery = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         const res = response.data?.delivery;
@@ -226,7 +235,8 @@ const PendingListDelivery = () => {
         filter: false,
         sort: true,
         customBodyRender: (value) => {
-          return moment(value).format("DD-MM-YYYY");
+          const date = moment(value);
+          return date.isValid() ? date.format("DD-MM-YYYY") : "-";
         },
       },
     },
@@ -272,6 +282,19 @@ const PendingListDelivery = () => {
       },
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!pendingDListData) return [];
+    return pendingDListData.filter((item) => {
+      const matchesShippingDate = shippingDate
+        ? moment(item.delivery_shipping_date).format("YYYY-MM-DD") ===
+          shippingDate
+        : true;
+
+      return matchesShippingDate;
+    });
+  }, [pendingDListData, shippingDate]);
+
   const options = {
     selectableRows: "none",
     elevation: 0,
@@ -289,9 +312,30 @@ const PendingListDelivery = () => {
             Delivery Pending List
           </h3>
 
-          {/* <Link  to='/add-delivery' className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md">
-          + Add Delivery
-        </Link> */}
+          <div className="flex gap-4">
+            <Input
+              label="Shipping Date"
+              type="date"
+              max={moment().format("YYYY-MM-DD")}
+              value={shippingDate}
+              onChange={(e) => {
+                setShippingDate(e.target.value);
+                localStorage.setItem(
+                  "delivery_shipping_date_filter",
+                  e.target.value,
+                );
+              }}
+            ></Input>
+            <button
+              onClick={() => {
+                setShippingDate("");
+                localStorage.removeItem("delivery_shipping_date_filter");
+              }}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg"
+            >
+              Clear
+            </button>
+          </div>
 
           <DeliveryPendingCreate
             onClick={() => navigate(`/add-delivery`)}
@@ -300,7 +344,7 @@ const PendingListDelivery = () => {
         </div>
         <div className="mt-5">
           <MUIDataTable
-            data={pendingDListData ? pendingDListData : []}
+            data={filteredData ? filteredData : []}
             columns={columns}
             options={options}
           />
@@ -331,9 +375,8 @@ const PendingListDelivery = () => {
                     />
                   </button> */}
                   <DeliveryPenViewWhatsapp
-                     onClick={whatsApp}
-                     
-                     className={IconsBackground}
+                    onClick={whatsApp}
+                    className={IconsBackground}
                   />
                   {/* <button onClick={whatsApp} className={IconsBackground}>
                     <WhatsAppIcon />
@@ -393,7 +436,7 @@ const PendingListDelivery = () => {
                       :{" "}
                       {student.delivery_shipping_date
                         ? moment(student.delivery_shipping_date).format(
-                            "DD-MM-YYYY"
+                            "DD-MM-YYYY",
                           )
                         : "N/A"}
                     </td>
