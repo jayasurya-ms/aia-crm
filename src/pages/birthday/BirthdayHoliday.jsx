@@ -31,7 +31,7 @@ const BirthdayHoliday = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         setBirthDayData(response?.data?.birthday);
@@ -129,7 +129,7 @@ Academy of Internal Audit`;
           const encodedMessage = encodeURIComponent(message);
           const whatsappUrl = `https://wa.me/91${mobile.replace(
             /\D/g,
-            ""
+            "",
           )}?text=${encodedMessage}`;
 
           return (
@@ -152,9 +152,10 @@ Academy of Internal Audit`;
     selectableRows: "none",
     elevation: 0,
     responsive: "standard",
-    viewColumns: false,
-    download: false,
-    print: false,
+    viewColumns: true,
+    download: true,
+    print: true,
+    filter: false,
   };
 
   return (

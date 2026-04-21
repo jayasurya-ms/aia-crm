@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -12,6 +12,7 @@ import { ButtonBack, ButtonCreate } from "../../components/common/ButtonCss";
 
 const AddCourse = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [course, setCourse] = useState({
@@ -60,7 +61,7 @@ const AddCourse = () => {
 
       if (response.data.code == 200) {
         toast.success("Data Updated Successfully");
-        navigate("/courses");
+        navigate(`/courses${location.search}`);
       } else {
         if (response.data.code == 401) {
           toast.error("Couty Duplicate Entry");
@@ -83,7 +84,7 @@ const AddCourse = () => {
       <div>
         {/* Title */}
         <div className="flex mb-4 mt-6">
-          <Link to="/courses">
+          <Link to={`/courses${location.search}`}>
             <MdKeyboardBackspace className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl" />
           </Link>
           <h1 className="text-2xl text-[#464D69] font-semibold ml-2 content-center">
@@ -128,7 +129,7 @@ const AddCourse = () => {
               </button>
               <button
                 className={ButtonBack}
-                onClick={() => navigate("/courses")}
+                onClick={() => navigate(`/courses${location.search}`)}
               >
                 Back
               </button>

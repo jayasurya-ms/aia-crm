@@ -2,7 +2,7 @@ import axios from "axios";
 import moment from "moment";
 import MUIDataTable from "mui-datatables";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import BASE_URL from "../../../base/BaseUrl";
 import {
   TaskManagerCompletedCreateRepetitive,
@@ -15,6 +15,11 @@ import Layout from "../../../layout/Layout";
 const CompletedListTask = () => {
   const [completedTListData, setCompletedTListData] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const pageParam = parseInt(searchParams.get("page") || "0", 10);
+  const searchParam = searchParams.get("search") || "";
 
   const fetchCompletedTData = async () => {
     try {
@@ -110,12 +115,23 @@ const CompletedListTask = () => {
   const options = {
     selectableRows: "none",
     elevation: 0,
-
     responsive: "standard",
     viewColumns: true,
     download: true,
     filter: false,
     print: true,
+    page: pageParam,
+    searchText: searchParam,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onTableChange: (action, tableState) => {
+      if (action === "changePage") {
+        setSearchParams({ search: tableState.searchText || "", page: tableState.page.toString() });
+      }
+    },
+    onSearchChange: (searchText) => {
+      setSearchParams({ search: searchText || "", page: "0" });
+    },
   };
   return (
     <Layout>
@@ -125,25 +141,13 @@ const CompletedListTask = () => {
           Task Manager Completed List
         </h3>
         <div>
-          {/* <Link
-            to="/add-task"
-            className="btn mr-2 btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
-          >
-            + Add Task
-          </Link>
-          <Link
-            to="/add-repetitive"
-            className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
-          >
-            + Add Repetitive
-          </Link> */}
           <TaskManagerCompletedCreateTask
             className={ButtonCreate}
-            onClick={() => navigate("/add-task")}
+            onClick={() => navigate(`/add-task${location.search}`)}
           ></TaskManagerCompletedCreateTask>
           <TaskManagerCompletedCreateRepetitive
             className={ButtonCreate}
-            onClick={() => navigate("/add-repetitive")}
+            onClick={() => navigate(`/add-repetitive${location.search}`)}
           ></TaskManagerCompletedCreateRepetitive>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import Layout from "../../layout/Layout";
 import { ContextPanel } from "../../utils/ContextPanel";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import MUIDataTable from "mui-datatables";
 import { MdEdit } from "react-icons/md";
 import axios from "axios";
@@ -17,6 +17,37 @@ const CountryList = () => {
   const [loading, setLoading] = useState(false);
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const page = parseInt(searchParams.get("page") || "0");
+
+  const handleSearch = (value) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        if (value) {
+          params.set("search", value);
+        } else {
+          params.delete("search");
+        }
+        params.set("page", "0");
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
+  const handlePageChange = (currentPage) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", currentPage.toString());
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
   useEffect(() => {
     const fetchCountryData = async () => {
       try {
@@ -32,7 +63,7 @@ const CountryList = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         setCountryListData(response.data?.country);
@@ -51,7 +82,7 @@ const CountryList = () => {
       name: "country_name",
       label: "Country",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -59,7 +90,7 @@ const CountryList = () => {
       name: "country_code",
       label: "Country Code",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -67,7 +98,7 @@ const CountryList = () => {
       name: "country_status",
       label: "Status",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -87,7 +118,9 @@ const CountryList = () => {
                 className="h-5 w-5 cursor-pointer"
               /> */}
               <CountryEdit
-                onClick={() => navigate(`/edit-country/${id}`)}
+                onClick={() =>
+                  navigate(`/edit-country/${id}?${searchParams.toString()}`)
+                }
                 className="h-5 w-5 cursor-pointer"
               />
             </div>
@@ -96,6 +129,7 @@ const CountryList = () => {
       },
     },
   ];
+
   const options = {
     selectableRows: "none",
     elevation: 0,
@@ -103,8 +137,15 @@ const CountryList = () => {
     viewColumns: true,
     download: true,
     print: true,
-    
+    searchText: searchQuery,
+    page: page,
+    filter: false,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onSearchChange: (searchText) => handleSearch(searchText),
+    onChangePage: (currentPage) => handlePageChange(currentPage),
   };
+
   return (
     <Layout>
       <div className="flex flex-col md:flex-row justify-between items-center bg-white mt-5 p-2 rounded-lg space-y-4 md:space-y-0">
@@ -119,7 +160,7 @@ const CountryList = () => {
           + Add Country
         </Link> */}
         <CountryCreate
-          onClick={() => navigate(`/add-country`)}
+          onClick={() => navigate(`/add-country?${searchParams.toString()}`)}
           className={ButtonCreate}
         />
       </div>

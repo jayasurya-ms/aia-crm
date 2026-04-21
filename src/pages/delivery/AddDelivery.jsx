@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import axios from "axios";
 import { Input } from "@material-tailwind/react";
@@ -11,6 +11,7 @@ import { ButtonBack, ButtonCreate } from "../../components/common/ButtonCss";
 
 const AddDelivery = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [deliverymode, setDeliveryMode] = useState([]);
@@ -130,7 +131,7 @@ const AddDelivery = () => {
 
       if (response.data.code == 200) {
         toast.success("Data Updated Successfully");
-        navigate("/pending-delivery");
+        navigate(`/pending-delivery${location.search}`);
       } else {
         if (response.data.code == 401) {
           toast.error("Delivery Duplicate Entry");
@@ -153,9 +154,12 @@ const AddDelivery = () => {
       <div>
         {/* Title */}
         <div className="flex mb-4 mt-6">
-          <Link to="/pending-delivery">
+          <div
+            onClick={() => navigate(`/pending-delivery${location.search}`)}
+            className="cursor-pointer"
+          >
             <MdKeyboardBackspace className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl" />
-          </Link>
+          </div>
           <h1 className="text-2xl text-[#464D69] font-semibold ml-2 content-center">
             Add Delivery
           </h1>
@@ -250,9 +254,13 @@ const AddDelivery = () => {
               >
                 {isButtonDisabled ? "Submiting..." : "Submit"}
               </button>
-              <Link to="/pending-delivery">
-                <button className={ButtonBack}>Back</button>
-              </Link>
+              <button
+                type="button"
+                onClick={() => navigate(`/pending-delivery${location.search}`)}
+                className={ButtonBack}
+              >
+                Back
+              </button>
             </div>
           </form>
         </div>

@@ -2,7 +2,12 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import Layout from "../../../layout/Layout";
 import RequestFilter from "../../../components/RequestFilter";
 import { ContextPanel } from "../../../utils/ContextPanel";
-import { useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../../base/BaseUrl";
 import MUIDataTable from "mui-datatables";
@@ -25,8 +30,39 @@ const ApprovedListRequest = () => {
   );
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const page = parseInt(searchParams.get("page") || "0");
 
   const [shouldRefetch, setShouldRefetch] = useState(false);
+
+  const handleSearch = (value) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        if (value) {
+          params.set("search", value);
+        } else {
+          params.delete("search");
+        }
+        params.set("page", "0");
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
+  const handlePageChange = (currentPage) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", currentPage.toString());
+        return params;
+      },
+      { replace: true },
+    );
+  };
 
   const updateData = (e, value) => {
     const data = {
@@ -209,11 +245,17 @@ const ApprovedListRequest = () => {
   const options = {
     selectableRows: "none",
     elevation: 0,
-
     responsive: "standard",
     viewColumns: true,
     download: true,
     print: true,
+    filter: false,
+    searchText: searchQuery,
+    page: page,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onSearchChange: (searchText) => handleSearch(searchText),
+    onChangePage: (currentPage) => handlePageChange(currentPage),
     setRowProps: (rowData) => {
       return {
         style: {
@@ -257,7 +299,7 @@ const ApprovedListRequest = () => {
 
         <RequestApprovedCreate
           className={ButtonCreate}
-          onClick={() => navigate("/add-request")}
+          onClick={() => navigate(`/add-request?${searchParams.toString()}`)}
         ></RequestApprovedCreate>
       </div>
       <div className="mt-5">

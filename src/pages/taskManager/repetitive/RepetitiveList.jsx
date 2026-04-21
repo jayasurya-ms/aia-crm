@@ -1,7 +1,7 @@
 import axios from "axios";
 import MUIDataTable from "mui-datatables";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import BASE_URL from "../../../base/BaseUrl";
 import {
@@ -16,9 +16,14 @@ import Layout from "../../../layout/Layout";
 const RepetitiveList = () => {
   const [repetitiveListData, setRepetitiveListData] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedIds, setSelectedIds] = useState([]);
-  const [page, setPage] = useState(0);
+  
+  const pageParam = parseInt(searchParams.get("page") || "0", 10);
+  const searchParam = searchParams.get("search") || "";
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const fetchPendingTData = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -58,8 +63,8 @@ const RepetitiveList = () => {
           // slice current page rows
           const currentPageRows =
             repetitiveListData?.slice(
-              page * rowsPerPage,
-              page * rowsPerPage + rowsPerPage
+              pageParam * rowsPerPage,
+              pageParam * rowsPerPage + rowsPerPage
             ) || [];
 
           const pageIds = currentPageRows.map((item) => item.id);
@@ -166,7 +171,7 @@ const RepetitiveList = () => {
           return (
             <div className="flex items-center space-x-2">
               <TaskManagerRepetitiveEdit
-                onClick={(e) => navigate(`/update-repetitive/${id}`)}
+                onClick={(e) => navigate(`/update-repetitive/${id}${location.search}`)}
                 className="h-5 w-5 cursor-pointer"
               />
             </div>
@@ -216,24 +221,36 @@ const RepetitiveList = () => {
   const options = {
     elevation: 0,
     selectableRows: "none",
-    page: page,
+    responsive: "standard",
+    viewColumns: true,
+    download: true,
+    filter: false,
+    print: true,
+    page: pageParam,
+    searchText: searchParam,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
     rowsPerPage: rowsPerPage,
     rowsPerPageOptions: [10, 20, 50, 100],
 
     onTableChange: (action, tableState) => {
       switch (action) {
         case "changePage":
-          setPage(tableState.page);
+          setSearchParams({ search: tableState.searchText || "", page: tableState.page.toString() });
           break;
 
         case "changeRowsPerPage":
           setRowsPerPage(tableState.rowsPerPage);
-          setPage(0);
+          setSearchParams({ search: tableState.searchText || "", page: "0" });
           break;
 
         default:
           break;
       }
+    },
+
+    onSearchChange: (searchText) => {
+      setSearchParams({ search: searchText || "", page: "0" });
     },
 
     customToolbar: () => (
@@ -253,7 +270,7 @@ const RepetitiveList = () => {
 
         <TaskManagerRepetitiveCreate
           className={ButtonCreate}
-          onClick={() => navigate("/add-repetitive")}
+          onClick={() => navigate(`/add-repetitive${location.search}`)}
         ></TaskManagerRepetitiveCreate>
       </div>
       <div className="mt-5">

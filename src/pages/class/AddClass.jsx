@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import axios from "axios";
 import { Input } from "@material-tailwind/react";
@@ -11,6 +11,7 @@ import { ButtonBack, ButtonCreate } from "../../components/common/ButtonCss";
 
 const AddClass = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [student, setClass] = useState({
@@ -82,7 +83,7 @@ const AddClass = () => {
 
       if (response.data.code == "200") {
         toast.success("Data Updated Successfully");
-        navigate("/class");
+        navigate(`/class${location.search}`);
       } else {
         if (response.data.code == "401") {
           toast.error("Class Duplicate Entry");
@@ -105,9 +106,12 @@ const AddClass = () => {
       <div>
         {/* Title */}
         <div className="flex mb-4 mt-6">
-          <Link to="/class">
+          <div
+            onClick={() => navigate(`/class${location.search}`)}
+            className="cursor-pointer"
+          >
             <MdKeyboardBackspace className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl" />
-          </Link>
+          </div>
           <h1 className="text-2xl text-[#464D69] font-semibold ml-2 content-center">
             Add Class
           </h1>
@@ -185,9 +189,13 @@ const AddClass = () => {
               >
                 {isButtonDisabled ? "Submiting..." : "Submit"}
               </button>
-              <Link to="/class">
-                <button className={ButtonBack}>Back</button>
-              </Link>
+              <button
+                type="button"
+                onClick={() => navigate(`/class${location.search}`)}
+                className={ButtonBack}
+              >
+                Back
+              </button>
             </div>
           </form>
         </div>

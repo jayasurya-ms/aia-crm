@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import Layout from "../../../layout/Layout";
-import EnquiryFilter from "../../../components/EnquiryFilter";
-import { ContextPanel } from "../../../utils/ContextPanel";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../../base/BaseUrl";
 import { MdEdit } from "react-icons/md";
@@ -16,6 +17,10 @@ import {
 } from "../../../components/buttonIndex/ButtonComponents";
 import { ButtonCreate } from "../../../components/common/ButtonCss";
 import { Input } from "@material-tailwind/react";
+import { useContext, useState, useEffect, useMemo } from "react";
+import { ContextPanel } from "../../../utils/ContextPanel";
+import EnquiryFilter from "../../../components/EnquiryFilter";
+import Layout from "../../../layout/Layout";
 
 const OverdueListEnquiry = () => {
   const [overdueListData, setOverdueListData] = useState(null);
@@ -29,6 +34,37 @@ const OverdueListEnquiry = () => {
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const page = parseInt(searchParams.get("page") || "0");
+
+  const handleSearch = (value) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        if (value) {
+          params.set("search", value);
+        } else {
+          params.delete("search");
+        }
+        params.set("page", "0");
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
+  const handlePageChange = (currentPage) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", currentPage.toString());
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
   useEffect(() => {
     const fetchOverData = async () => {
       try {
@@ -205,29 +241,35 @@ const OverdueListEnquiry = () => {
   const options = {
     selectableRows: "none",
     elevation: 0,
-
     responsive: "standard",
     viewColumns: true,
     download: true,
     print: true,
+    filter: false,
+    searchText: searchQuery,
+    page: page,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onSearchChange: (searchText) => handleSearch(searchText),
+    onChangePage: (currentPage) => handlePageChange(currentPage),
   };
 
   const handleOpenButton = (e) => {
     e.preventDefault();
     localStorage.setItem("enquiry_page", location.pathname);
-    navigate("/add-enquiry");
+    navigate(`/add-enquiry?${searchParams.toString()}`);
   };
 
   const handleOpenButtonLink = (e, value) => {
     e.preventDefault();
     localStorage.setItem("enquiry_page", location.pathname);
-    navigate(`/edit-enquiry/${value}`);
+    navigate(`/edit-enquiry/${value}?${searchParams.toString()}`);
   };
 
   const handleOpenButtonLinkView = (e, value) => {
     e.preventDefault();
     localStorage.setItem("enquiry_page", location.pathname);
-    navigate(`/view-enquiry/${value}`);
+    navigate(`/view-enquiry/${value}?${searchParams.toString()}`);
   };
   return (
     <Layout>
@@ -253,7 +295,6 @@ const OverdueListEnquiry = () => {
           <Input
             label="Followup Date"
             type="date"
-            max={moment().format("YYYY-MM-DD")}
             value={followupDate}
             onChange={(e) => {
               setFollowupDate(e.target.value);

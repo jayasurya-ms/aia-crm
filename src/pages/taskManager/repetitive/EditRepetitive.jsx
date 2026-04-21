@@ -2,7 +2,12 @@ import { Spinner, Textarea } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { MdKeyboardBackspace } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import { toast } from "react-toastify";
 import BASE_URL from "../../../base/BaseUrl";
 import { ButtonBack, ButtonCreate } from "../../../components/common/ButtonCss";
@@ -47,6 +52,8 @@ const daysOfMonth = Array.from({ length: 30 }, (_, i) => ({
 
 const EditRepetitive = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { id } = useParams();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [taskDetails, setTaskDetails] = useState([]);
@@ -70,7 +77,7 @@ const EditRepetitive = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
       setEnquiry(response.data.taskmanager);
     } catch (error) {
@@ -87,7 +94,7 @@ const EditRepetitive = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
       setTaskDetails(response.data.userList);
     } catch (error) {
@@ -133,12 +140,12 @@ const EditRepetitive = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (response.data.code == "200") {
         toast.success(response.data.msg || "Data Updated Successfully");
-        navigate("/repetitive-list");
+        navigate(`/task-repetitive${location.search}`);
       } else {
         if (response.data.code == "401") {
           toast.error(response.data.msg || "Task Duplicate Entry");
@@ -161,7 +168,7 @@ const EditRepetitive = () => {
       <div>
         <div className="flex mb-4 mt-6">
           <MdKeyboardBackspace
-            onClick={() => navigate("/repetitive-list")}
+            onClick={() => navigate(`/task-repetitive${location.search}`)}
             className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl"
           />
           <h1 className="text-2xl text-[#464D69] font-semibold ml-2 content-center">
@@ -246,7 +253,7 @@ const EditRepetitive = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate("/repetitive-list")}
+                  onClick={() => navigate(`/task-repetitive${location.search}`)}
                   className={ButtonBack}
                 >
                   Back

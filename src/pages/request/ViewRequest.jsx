@@ -1,6 +1,6 @@
 import { Card, CardBody, Input, Typography } from "@material-tailwind/react";
 import Layout from "../../layout/Layout";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -11,6 +11,7 @@ const ViewRequest = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+  const location = useLocation();
   const [student, setStudentDelivery] = useState({});
 
   useEffect(() => {
@@ -43,8 +44,8 @@ const ViewRequest = () => {
   }, []);
 
   const handleBackButton = (e) => {
-    e.preventDefault(); 
-    navigate(-1);
+    e.preventDefault();
+    navigate(`/request-pending${location.search}`);
   };
 
   return (

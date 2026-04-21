@@ -2,7 +2,7 @@ import axios from "axios";
 import moment from "moment";
 import MUIDataTable from "mui-datatables";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import BASE_URL from "../../../base/BaseUrl";
 import {
   TaskManagerPendingCreateRepetitive,
@@ -16,6 +16,12 @@ import Layout from "../../../layout/Layout";
 const FutureListTask = () => {
   const [futureListData, setFutureListData] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const pageParam = parseInt(searchParams.get("page") || "0", 10);
+  const searchParam = searchParams.get("search") || "";
+
   useEffect(() => {
     const fetchFutureData = async () => {
       try {
@@ -98,7 +104,7 @@ const FutureListTask = () => {
           return (
             <div className="flex items-center space-x-2">
               <TaskManagerPendingEdit
-                onClick={() => navigate(`/edit-task/${id}`)}
+                onClick={() => navigate(`/edit-task/${id}${location.search}`)}
                 title="Edit"
                 className="h-5 w-5 cursor-pointer"
               />
@@ -111,12 +117,23 @@ const FutureListTask = () => {
   const options = {
     selectableRows: "none",
     elevation: 0,
-
     responsive: "standard",
     viewColumns: true,
     download: true,
     filter: false,
     print: true,
+    page: pageParam,
+    searchText: searchParam,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onTableChange: (action, tableState) => {
+      if (action === "changePage") {
+        setSearchParams({ search: tableState.searchText || "", page: tableState.page.toString() });
+      }
+    },
+    onSearchChange: (searchText) => {
+      setSearchParams({ search: searchText || "", page: "0" });
+    },
   };
   return (
     <Layout>
@@ -128,11 +145,11 @@ const FutureListTask = () => {
         <div>
           <TaskManagerPendingCreateTask
             className={ButtonCreate}
-            onClick={() => navigate("/add-task")}
+            onClick={() => navigate(`/add-task${location.search}`)}
           ></TaskManagerPendingCreateTask>
           <TaskManagerPendingCreateRepetitive
             className={ButtonCreate}
-            onClick={() => navigate("/add-repetitive")}
+            onClick={() => navigate(`/add-repetitive${location.search}`)}
           ></TaskManagerPendingCreateRepetitive>
         </div>
       </div>

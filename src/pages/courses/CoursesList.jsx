@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import Layout from "../../layout/Layout";
 import { ContextPanel } from "../../utils/ContextPanel";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import BASE_URL from "../../base/BaseUrl";
 import axios from "axios";
 import MUIDataTable from "mui-datatables";
@@ -17,6 +17,37 @@ const CoursesList = () => {
   const [loading, setLoading] = useState(false);
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const page = parseInt(searchParams.get("page") || "0");
+
+  const handleSearch = (value) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        if (value) {
+          params.set("search", value);
+        } else {
+          params.delete("search");
+        }
+        params.set("page", "0");
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
+  const handlePageChange = (currentPage) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", currentPage.toString());
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
   useEffect(() => {
     const fetchCoursesData = async () => {
       try {
@@ -32,7 +63,7 @@ const CoursesList = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         setCoursesListData(response.data?.course);
@@ -87,7 +118,9 @@ const CoursesList = () => {
                 className="h-5 w-5 cursor-pointer"
               /> */}
               <CoursesEdit
-                onClick={() => navigate(`/add-courses/${id}`)}
+                onClick={() =>
+                  navigate(`/add-courses/${id}?${searchParams.toString()}`)
+                }
                 className="h-5 w-5 cursor-pointer"
               />
             </div>
@@ -103,6 +136,13 @@ const CoursesList = () => {
     viewColumns: true,
     download: true,
     print: true,
+    searchText: searchQuery,
+    filter: false,
+    page: page,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onSearchChange: (searchText) => handleSearch(searchText),
+    onChangePage: (currentPage) => handlePageChange(currentPage),
   };
   return (
     <Layout>
@@ -116,7 +156,7 @@ const CoursesList = () => {
         </Link> */}
 
         <CoursesCreate
-          onClick={() => navigate(`/add-courses`)}
+          onClick={() => navigate(`/add-courses?${searchParams.toString()}`)}
           className={ButtonCreate}
         />
       </div>

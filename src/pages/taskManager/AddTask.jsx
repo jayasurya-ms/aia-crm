@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -12,6 +12,7 @@ import { ButtonBack, ButtonCreate } from "../../components/common/ButtonCss";
 
 const AddTask = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [enquiry, setEnquiry] = useState({
@@ -42,7 +43,7 @@ const AddTask = () => {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
         setTaskDetails(response.data.userList);
       } catch (error) {
@@ -82,12 +83,12 @@ const AddTask = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (response.data.code == "200") {
         toast.success("Data Updated Successfully");
-        navigate(-1);
+        navigate(`/task-pending${location.search}`);
       } else {
         if (response.data.code == "401") {
           toast.error("Task Duplicate Entry");
@@ -111,7 +112,7 @@ const AddTask = () => {
         {/* Title */}
         <div className="flex mb-4 mt-6">
           <MdKeyboardBackspace
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/task-pending${location.search}`)}
             className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl"
           />
 
@@ -183,7 +184,7 @@ const AddTask = () => {
               <button
                 type="button"
                 className={ButtonBack}
-                onClick={() => navigate(-1)}
+                onClick={() => navigate(`/task-pending${location.search}`)}
               >
                 Back
               </button>

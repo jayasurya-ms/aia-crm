@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Layout from "../../../layout/Layout";
 import TaskManagerFilter from "../../../components/TaskManagerFilter";
 import { ContextPanel } from "../../../utils/ContextPanel";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../../base/BaseUrl";
 import { MdEdit } from "react-icons/md";
@@ -20,6 +20,12 @@ const PendingListTask = () => {
   const [loading, setLoading] = useState(false);
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const pageParam = parseInt(searchParams.get("page") || "0", 10);
+  const searchParam = searchParams.get("search") || "";
+
   useEffect(() => {
     const fetchPendingTData = async () => {
       try {
@@ -110,7 +116,7 @@ const PendingListTask = () => {
           return (
             <div className="flex items-center space-x-2">
               <TaskManagerPendingEdit
-                onClick={() => navigate(`/edit-task/${id}`)}
+                onClick={() => navigate(`/edit-task/${id}${location.search}`)}
                 title="Edit"
                 className="h-5 w-5 cursor-pointer"
               />
@@ -123,12 +129,23 @@ const PendingListTask = () => {
   const options = {
     selectableRows: "none",
     elevation: 0,
-
     responsive: "standard",
     viewColumns: true,
     download: true,
     filter: false,
     print: true,
+    page: pageParam,
+    searchText: searchParam,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onTableChange: (action, tableState) => {
+      if (action === "changePage") {
+        setSearchParams({ search: tableState.searchText || "", page: tableState.page.toString() });
+      }
+    },
+    onSearchChange: (searchText) => {
+      setSearchParams({ search: searchText || "", page: "0" });
+    },
   };
   return (
     <Layout>
@@ -138,26 +155,13 @@ const PendingListTask = () => {
           Task Manager Pending List
         </h3>
         <div>
-          {/* <Link
-            to="/add-task"
-            className="mr-2 btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
-          >
-            + Add Task
-          </Link>
-          <Link
-            to="/add-repetitive"
-            className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
-          >
-            + Add Repetitive
-          </Link> */}
-
           <TaskManagerPendingCreateTask
             className={ButtonCreate}
-            onClick={() => navigate("/add-task")}
+            onClick={() => navigate(`/add-task${location.search}`)}
           ></TaskManagerPendingCreateTask>
           <TaskManagerPendingCreateRepetitive
             className={ButtonCreate}
-            onClick={() => navigate("/add-repetitive")}
+            onClick={() => navigate(`/add-repetitive${location.search}`)}
           ></TaskManagerPendingCreateRepetitive>
         </div>
       </div>

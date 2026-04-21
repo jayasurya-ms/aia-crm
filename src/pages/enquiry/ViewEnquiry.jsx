@@ -1,7 +1,7 @@
 import { Card, CardBody, Input, Typography } from "@material-tailwind/react";
 import CommonCard from "../../components/common/dataCard/CommonCard";
 import Layout from "../../layout/Layout";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useEffect, useState } from "react";
 import Fields from "../../components/common/TextField/TextField";
@@ -26,6 +26,7 @@ const ViewEnquiry = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [enquiry, setEnquiry] = useState({
@@ -102,7 +103,8 @@ const ViewEnquiry = () => {
     }).then((res) => {
       if (res.data.code == 200) {
         window.open(whatsappLink, "_blank");
-        navigate("/openList-enquiry");
+        const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+        navigate(`${backUrl}${location.search}`);
       } else {
         toast.error("Whats App Not Sent Sucessfully");
       }
@@ -148,7 +150,8 @@ const ViewEnquiry = () => {
     }).then((res) => {
       if (res.data.code == "200") {
         window.open(whatsappLink, "_blank");
-        history.push("listing");
+        const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+        navigate(`${backUrl}${location.search}`);
       } else {
         toast.error("Whats App Not Sent Sucessfully");
       }
@@ -172,7 +175,8 @@ const ViewEnquiry = () => {
     }).then((res) => {
       if (res.data.code == 200) {
         toast.success("Email Sent Sucessfully");
-        navigate("/openList-enquiry");
+        const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+        navigate(`${backUrl}${location.search}`);
         setIsButtonDisabled(false);
       } else {
         toast.error("Email Not Sent Sucessfully");
@@ -183,7 +187,8 @@ const ViewEnquiry = () => {
 
   const handleBackButton = (e) => {
     e.preventDefault();
-    navigate(-1);
+    const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+    navigate(`${backUrl}${location.search}`);
   };
 
   return (

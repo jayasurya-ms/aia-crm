@@ -3,6 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import MUIDataTable from "mui-datatables";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import BASE_URL from "../../base/BaseUrl";
 import { WebisteEnquiryEdit } from "../../components/buttonIndex/ButtonComponents";
@@ -16,6 +17,10 @@ const WebsiteEnquiryClose = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const [userStatus, setUserStatus] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const pageParam = parseInt(searchParams.get("page") || "0", 10);
+  const searchParam = searchParams.get("search") || "";
 
   const fetchStudentData = async () => {
     try {
@@ -27,7 +32,7 @@ const WebsiteEnquiryClose = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       setWebsiteListData(response.data?.webenquiry);
@@ -50,7 +55,7 @@ const WebsiteEnquiryClose = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const enquiryData = response.data?.webenquiry;
@@ -163,10 +168,25 @@ const WebsiteEnquiryClose = () => {
     selectableRows: "none",
     elevation: 0,
     responsive: "standard",
-    viewColumns: false,
-    download: false,
-    filter: true,
-    print: false,
+    viewColumns: true,
+    download: true,
+    filter: false,
+    print: true,
+    page: pageParam,
+    searchText: searchParam,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onTableChange: (action, tableState) => {
+      if (action === "changePage") {
+        setSearchParams({
+          search: tableState.searchText || "",
+          page: tableState.page.toString(),
+        });
+      }
+    },
+    onSearchChange: (searchText) => {
+      setSearchParams({ search: searchText || "", page: "0" });
+    },
   };
   const handleUpdateStatus = async () => {
     try {
@@ -182,7 +202,7 @@ const WebsiteEnquiryClose = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.success("Status updated successfully!");

@@ -2,7 +2,12 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import Layout from "../../../layout/Layout";
 import DeliveryFilter from "../../../components/DeliveryFilter";
 import { ContextPanel } from "../../../utils/ContextPanel";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../../base/BaseUrl";
 import { MdEdit } from "react-icons/md";
@@ -43,9 +48,41 @@ const DeliveredListDelivery = () => {
   );
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const page = parseInt(searchParams.get("page") || "0");
+
   const [open, setOpen] = useState(false);
   const [student, setStudentDelivery] = useState({});
   const [studentnew, setStudentNew] = useState({});
+
+  const handleSearch = (value) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        if (value) {
+          params.set("search", value);
+        } else {
+          params.delete("search");
+        }
+        params.set("page", "0");
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
+  const handlePageChange = (currentPage) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", currentPage.toString());
+        return params;
+      },
+      { replace: true },
+    );
+  };
 
   const handleClickOpen = (value) => {
     fetchData(value);
@@ -266,7 +303,9 @@ const DeliveredListDelivery = () => {
                 className="h-5 w-5 cursor-pointer"
               /> */}
               <DeliveryDeliverdEdit
-                onClick={() => navigate(`/edit-delivery/${id}`)}
+                onClick={() =>
+                  navigate(`/edit-delivery/${id}?${searchParams.toString()}`)
+                }
                 className="h-5 w-5 cursor-pointer"
               />
               {/* <MdOutlineRemoveRedEye
@@ -308,6 +347,13 @@ const DeliveredListDelivery = () => {
     viewColumns: true,
     download: true,
     print: true,
+    filter: false,
+    searchText: searchQuery,
+    page: page,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onSearchChange: (searchText) => handleSearch(searchText),
+    onChangePage: (currentPage) => handlePageChange(currentPage),
     setRowProps: (rowData) => {
       return {
         style: {
@@ -366,7 +412,7 @@ const DeliveredListDelivery = () => {
           </div>
 
           <DeliveryDeliverdCreate
-            onClick={() => navigate(`/add-delivery`)}
+            onClick={() => navigate(`/add-delivery?${searchParams.toString()}`)}
             className={ButtonCreate}
           />
         </div>

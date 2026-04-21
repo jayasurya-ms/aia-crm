@@ -14,7 +14,7 @@ import { Edit } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { MdKeyboardBackspace } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import BASE_URL from "../../base/BaseUrl";
 import {
@@ -87,6 +87,7 @@ const EditEnquiry = () => {
   const [editData, setEditData] = useState({ id: null, value: "" });
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [enquiry, setEnquiry] = useState({
@@ -192,7 +193,8 @@ const EditEnquiry = () => {
     }).then((res) => {
       if (res.data.code == 200) {
         window.open(whatsappLink, "_blank");
-        navigate("/openList-enquiry");
+        const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+        navigate(`${backUrl}${location.search}`);
       } else {
         toast.error("Whats App Not Sent Sucessfully");
       }
@@ -237,7 +239,8 @@ const EditEnquiry = () => {
     }).then((res) => {
       if (res.data.code == "200") {
         window.open(whatsappLink, "_blank");
-        history.push("listing");
+        const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+        navigate(`${backUrl}${location.search}`);
       } else {
         toast.error("Whats App Not Sent Sucessfully");
       }
@@ -271,7 +274,8 @@ const EditEnquiry = () => {
 
       if (response.data.code == 200) {
         toast.success("Data Updated Successfully");
-        navigate(localStorage.getItem("enquiry_page"));
+        const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+        navigate(`${backUrl}${location.search}`);
       } else {
         if (response.data.code == 401) {
           toast.error("Enquiry Duplicate Entry");
@@ -310,7 +314,8 @@ const EditEnquiry = () => {
 
       if (res.data.code === 200) {
         toast.success("Email Sent Successfully");
-        navigate("/openList-enquiry");
+        const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+        navigate(`${backUrl}${location.search}`);
       } else {
         toast.error("Email Not Sent Successfully");
       }
@@ -322,13 +327,15 @@ const EditEnquiry = () => {
     }
   };
 
-  const handleEdit = () => {
-    navigate(`/edit-personal/${id}`);
+  const handleEdit = (e) => {
+    e.preventDefault();
+    navigate(`/edit-personal/${id}${location.search}`);
   };
 
   const handleBackButton = (e) => {
     e.preventDefault();
-    navigate(localStorage.getItem("enquiry_page"));
+    const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+    navigate(`${backUrl}${location.search}`);
   };
   const handleEditClick = (row) => {
     setEditData({ id: row.id, value: "" });

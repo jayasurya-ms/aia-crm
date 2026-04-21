@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { Button, IconButton, Tooltip } from "@material-tailwind/react";
 import axios from "axios";
 import Moment from "moment";
@@ -16,6 +16,7 @@ import BASE_URL from "../../base/BaseUrl";
 
 const AddAttendence = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [classes, setClass] = useState({});
   const [students, setStudents] = useState([]);
@@ -120,7 +121,7 @@ const AddAttendence = () => {
       }).then((res) => {
         if (res.data.code == "200") {
           toast.success("Attendance Added Sucessfully");
-          navigate("/class");
+          navigate(`/class${location.search}`);
         } else {
           toast.error("Duplicate Entry");
           setIsButtonDisabled(false);
@@ -145,9 +146,12 @@ const AddAttendence = () => {
           theme="light"
         />{" "}
         <div className="flex mb-4 mt-6">
-          <Link to="/class">
+          <div
+            onClick={() => navigate(`/class${location.search}`)}
+            className="cursor-pointer"
+          >
             <BiLeftArrowAlt className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl" />
-          </Link>
+          </div>
           <h1 className="text-2xl text-[#464D69] font-semibold ml-2 content-center">
             Add Attendence
           </h1>
@@ -192,9 +196,13 @@ const AddAttendence = () => {
               >
                 {isButtonDisabled ? "Submiting..." : "Submit"}
               </button>
-              <Link to="/class">
-                <button className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md">Back</button>
-              </Link>
+              <button
+                type="button"
+                onClick={() => navigate(`/class${location.search}`)}
+                className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
+              >
+                Back
+              </button>
             </div>
           </form>
         </div>

@@ -2,7 +2,7 @@ import { Input } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { MdKeyboardBackspace } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import BASE_URL from "../../base/BaseUrl";
 import { ButtonBack, ButtonCreate } from "../../components/common/ButtonCss";
@@ -76,6 +76,7 @@ const source = [
 
 const AddEnquiry = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [enquiry, setEnquiry] = useState({
@@ -216,7 +217,8 @@ const AddEnquiry = () => {
 
       if (response.data.code == 200) {
         toast.success("Data Updated Successfully");
-        navigate(localStorage.getItem("enquiry_page"));
+        const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+        navigate(`${backUrl}${location.search}`);
       } else {
         if (response.data.code == 401) {
           toast.error("Enquiry Duplicate Entry");
@@ -236,7 +238,8 @@ const AddEnquiry = () => {
 
   const handleBackButton = (e) => {
     e.preventDefault();
-    navigate(localStorage.getItem("enquiry_page"));
+    const backUrl = localStorage.getItem("enquiry_page") || "/openList-enquiry";
+    navigate(`${backUrl}${location.search}`);
   };
 
   return (

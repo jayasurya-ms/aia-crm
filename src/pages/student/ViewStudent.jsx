@@ -1,7 +1,7 @@
 import { Card, CardBody, Input, Typography } from "@material-tailwind/react";
 import CommonCard from "../../components/common/dataCard/CommonCard";
 import Layout from "../../layout/Layout";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useEffect, useState } from "react";
 import Fields from "../../components/common/TextField/TextField";
@@ -36,6 +36,7 @@ const ViewStudent = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+  const location = useLocation();
   const [student, setStudent] = useState({});
   const [studentCourse, setStudentCourse] = useState({});
   const [studentExam, setStudentExam] = useState({});
@@ -258,7 +259,7 @@ const ViewStudent = () => {
 
   const handleBackButton = (e) => {
     e.preventDefault();
-    navigate(`/student`);
+    navigate(`/student${location.search}`);
   };
 
   return (
@@ -280,7 +281,7 @@ const ViewStudent = () => {
             <div className="mb-4 mt-6  flex md:flex-row flex-col md:gap-0 gap-2">
               <StudentViewEdStudent
                 className={ButtonCreate}
-                onClick={() => navigate(`/edit-student/${student.id}`)}
+                onClick={() => navigate(`/edit-student/${student.id}${location.search}`)}
               />
               {student.whatsapp_count == 0 && (
                 <button
@@ -293,7 +294,7 @@ const ViewStudent = () => {
 
               <StudentViewAdCourse
                 onClick={() =>
-                  navigate(`/add-student-course/${student.user_uid}`)
+                  navigate(`/add-student-course/${student.user_uid}${location.search}`)
                 }
                 className={ButtonCreate}
               />
@@ -301,12 +302,12 @@ const ViewStudent = () => {
               <StudentViewAdDelivery
                 className={ButtonCreate}
                 onClick={() =>
-                  navigate(`/add-student-delivery/${student.user_uid}`)
+                  navigate(`/add-student-delivery/${student.user_uid}${location.search}`)
                 }
               />
 
               <StudentViewAdExam
-                onClick={() => navigate(`/add-exam/${student.user_uid}`)}
+                onClick={() => navigate(`/add-exam/${student.user_uid}${location.search}`)}
                 className={ButtonCreate}
               />
             </div>
@@ -388,7 +389,7 @@ const ViewStudent = () => {
                     <StudentViewVieEnquiry
                       className={ButtonCreate}
                       onClick={() =>
-                        navigate(`/view-student-enquiry/${student.user_uid}`)
+                        navigate(`/view-student-enquiry/${student.user_uid}${location.search}`)
                       }
                     />
                   </div>

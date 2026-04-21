@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import axios from "axios";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
@@ -13,6 +13,7 @@ import { ButtonBack, ButtonCreate } from "../../components/common/ButtonCss";
 
 const AddRequest = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [student, setRequest] = useState({
@@ -103,7 +104,7 @@ const AddRequest = () => {
 
       if (response.data.code == 200) {
         toast.success("Data Updated Successfully");
-        navigate("/request-pending");
+        navigate(`/request-pending${location.search}`);
       } else {
         if (response.data.code == 401) {
           toast.error("Request Duplicate Entry");
@@ -123,7 +124,7 @@ const AddRequest = () => {
 
   const handleBackButton = (e) => {
     e.preventDefault();
-    navigate(-1);
+    navigate(`/request-pending${location.search}`);
   };
 
   return (
