@@ -3,7 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import MUIDataTable from "mui-datatables";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import BASE_URL from "../../../base/BaseUrl";
 import { Input } from "@material-tailwind/react";
 import {
@@ -26,6 +26,37 @@ const OpenListEnquiry = () => {
   );
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const page = parseInt(searchParams.get("page") || "0");
+
+  const handleSearch = (value) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        if (value) {
+          params.set("search", value);
+        } else {
+          params.delete("search");
+        }
+        params.set("page", "0");
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
+  const handlePageChange = (currentPage) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", currentPage.toString());
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
   useEffect(() => {
     const fetchOpenData = async () => {
       setLoading(true);
@@ -192,24 +223,31 @@ const OpenListEnquiry = () => {
     viewColumns: true,
     download: true,
     print: true,
+    searchText: searchQuery,
+    filter: false,
+    page: page,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onSearchChange: (searchText) => handleSearch(searchText),
+    onChangePage: (currentPage) => handlePageChange(currentPage),
   };
 
   const handleOpenButton = (e) => {
     e.preventDefault();
     localStorage.setItem("enquiry_page", location.pathname);
-    navigate("/add-enquiry");
+    navigate(`/add-enquiry?${searchParams.toString()}`);
   };
 
   const handleOpenButtonLink = (e, value) => {
     e.preventDefault();
     localStorage.setItem("enquiry_page", location.pathname);
-    navigate(`/edit-enquiry/${value}`);
+    navigate(`/edit-enquiry/${value}?${searchParams.toString()}`);
   };
 
   const handleOpenButtonLinkView = (e, value) => {
     e.preventDefault();
     localStorage.setItem("enquiry_page", location.pathname);
-    navigate(`/view-enquiry/${value}`);
+    navigate(`/view-enquiry/${value}?${searchParams.toString()}`);
   };
 
   return (
@@ -233,7 +271,6 @@ const OpenListEnquiry = () => {
           <Input
             label="Followup Date"
             type="date"
-            max={moment().format("YYYY-MM-DD")}
             value={followupDate}
             onChange={(e) => {
               setFollowupDate(e.target.value);

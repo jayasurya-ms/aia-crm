@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Layout from "../../../layout/Layout";
 import TaskManagerFilter from "../../../components/TaskManagerFilter";
 import { ContextPanel } from "../../../utils/ContextPanel";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../../base/BaseUrl";
 import { MdEdit } from "react-icons/md";
@@ -14,6 +14,12 @@ const OverDueTaskList = () => {
   const [loading, setLoading] = useState(false);
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const pageParam = parseInt(searchParams.get("page") || "0", 10);
+  const searchParam = searchParams.get("search") || "";
+
   useEffect(() => {
     const fetchPendingTData = async () => {
       try {
@@ -34,19 +40,8 @@ const OverDueTaskList = () => {
 
         let res = response.data?.taskmanager;
         if (Array.isArray(res)) {
-          const tempRows = res.map((item) => [
-            moment(item["task_from_date"]).format("DD-MM-YYYY"),
-            moment(item["task_to_date"]).format("DD-MM-YYYY"),
-
-            item["name"],
-            item["task_details"],
-            item["task_status"],
-            item["id"],
-          ]);
           setPendingTListData(response.data?.taskmanager);
         }
-
-     
       } catch (error) {
         console.error("Error fetching pending list task manager data", error);
       } finally {
@@ -115,7 +110,7 @@ const OverDueTaskList = () => {
           return (
             <div className="flex items-center space-x-2">
               <MdEdit
-                onClick={() => navigate(`/edit-task/${id}`)}
+                onClick={() => navigate(`/edit-task/${id}${location.search}`)}
                 title="Edit"
                 className="h-5 w-5 cursor-pointer"
               />
@@ -128,12 +123,23 @@ const OverDueTaskList = () => {
   const options = {
     selectableRows: "none",
     elevation: 0,
-    
     responsive: "standard",
     viewColumns: true,
     download: true,
     filter: false,
     print: true,
+    page: pageParam,
+    searchText: searchParam,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onTableChange: (action, tableState) => {
+      if (action === "changePage") {
+        setSearchParams({ search: tableState.searchText || "", page: tableState.page.toString() });
+      }
+    },
+    onSearchChange: (searchText) => {
+      setSearchParams({ search: searchText || "", page: "0" });
+    },
     setRowProps: (rowData) => {
       return {
         style: {
@@ -146,12 +152,15 @@ const OverDueTaskList = () => {
     <Layout>
       <div className="flex flex-col md:flex-row justify-between items-center bg-white mt-5 p-2 rounded-lg space-y-4 md:space-y-0">
         <h3 className="text-center md:text-left text-lg md:text-xl font-bold">
-        Over Due Task List
+          Over Due Task List
         </h3>
 
-        <Link to="/add-task" className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md">
+        <button
+          onClick={() => navigate(`/add-task${location.search}`)}
+          className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
+        >
           + Add Task
-        </Link>
+        </button>
       </div>
       <div className="mt-5">
         <MUIDataTable

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -178,6 +178,7 @@ const course_status = [
 
 const EditRequest = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [student, setStudentCourse] = useState({
@@ -263,7 +264,7 @@ const EditRequest = () => {
 
       if (response.data.code == 200) {
         toast.success("Data Updated Successfully");
-        navigate(`/view-student/${id}`);
+        navigate(`/request-pending${location.search}`); // Assuming coming back to request list, or use location.search logic
       } else {
         if (response.data.code == 401) {
           toast.error("Course Duplicate Entry");
@@ -282,8 +283,8 @@ const EditRequest = () => {
   };
 
   const handleBackButton = (e) => {
-    e.preventDefault(); 
-    navigate(-1);
+    e.preventDefault();
+    navigate(`/request-pending${location.search}`);
   };
   return (
     <Layout>

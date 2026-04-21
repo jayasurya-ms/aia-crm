@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -45,6 +45,7 @@ const status = [
 
 const EditStudent = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { id } = useParams();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -145,7 +146,7 @@ const EditStudent = () => {
 
       if (response.data.code == "200") {
         toast.success("Data Updated Successfully");
-        navigate(`/view-student/${localStorage.getItem("s_id")}`);
+        navigate(`/view-student/${localStorage.getItem("s_id")}${location.search}`);
       } else {
         if (response.data.code == "401") {
           toast.error("Student Duplicate Entry");
@@ -165,7 +166,7 @@ const EditStudent = () => {
 
   const handleBackButton = (e) => {
     e.preventDefault();
-    navigate(`/view-student/${localStorage.getItem("s_id")}`);
+    navigate(`/view-student/${localStorage.getItem("s_id")}${location.search}`);
   };
 
   return (

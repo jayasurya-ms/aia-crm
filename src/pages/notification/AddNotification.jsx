@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import axios from "axios";
 
@@ -11,6 +11,8 @@ import { ButtonBack, ButtonCreate } from "../../components/common/ButtonCss";
 
 const AddNotification = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const [enquiry, setEnquiry] = useState({
     notification_heading: "",
@@ -81,7 +83,7 @@ const AddNotification = () => {
 
       if (response.data.code == 200) {
         toast.success("Data Updated Successfully");
-        navigate("/notification");
+        navigate(`/notification${location.search}`);
       } else {
         if (response.data.code == 401) {
           toast.error("Notification Duplicate Entry");
@@ -100,7 +102,7 @@ const AddNotification = () => {
   };
 
   const handleBackButton = () => {
-    navigate(-1);
+    navigate(`/notification${location.search}`);
   };
 
   return (
@@ -108,7 +110,7 @@ const AddNotification = () => {
       <div>
         {/* Title */}
         <div className="flex mb-4 mt-6">
-          <Link to="/notification">
+          <Link to={`/notification${location.search}`}>
             <MdKeyboardBackspace className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl" />
           </Link>
           <h1 className="text-2xl text-[#464D69] font-semibold ml-2 content-center">
@@ -167,7 +169,7 @@ const AddNotification = () => {
               >
                 {isButtonDisabled ? "Submiting..." : "Submit"}
               </button>
-              <Link to="/notification">
+              <Link to={`/notification${location.search}`}>
                 <button className={ButtonBack}>Back</button>
               </Link>
             </div>

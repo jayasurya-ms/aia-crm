@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -38,6 +38,7 @@ const status = [
 
 const EditDelivery = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [deliverymode, setDeliveryMode] = useState([]);
@@ -177,7 +178,7 @@ const EditDelivery = () => {
 
       if (response.data.code == 200) {
         toast.success("Data Updated Successfully");
-        navigate("/pending-delivery");
+        navigate(`/pending-delivery${location.search}`);
       } else {
         if (response.data.code == 401) {
           toast.error("Delivery Duplicate Entry");
@@ -200,9 +201,12 @@ const EditDelivery = () => {
       <div>
         {/* Title */}
         <div className="flex mb-4 mt-6">
-          <Link to="/pending-delivery">
+          <div
+            onClick={() => navigate(`/pending-delivery${location.search}`)}
+            className="cursor-pointer"
+          >
             <MdKeyboardBackspace className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl" />
-          </Link>
+          </div>
           <h1 className="text-2xl text-[#464D69] font-semibold ml-2 content-center">
             Edit Delivery
           </h1>
@@ -332,9 +336,13 @@ const EditDelivery = () => {
                 {isButtonDisabled ? "Updating..." : "Update"}
               </button>
 
-              <Link to="/pending-delivery">
-                <button className={ButtonBack}>Back</button>
-              </Link>
+              <button
+                type="button"
+                onClick={() => navigate(`/pending-delivery${location.search}`)}
+                className={ButtonBack}
+              >
+                Back
+              </button>
             </div>
           </form>
         </div>

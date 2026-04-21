@@ -1,7 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import Layout from "../../layout/Layout";
 import { ContextPanel } from "../../utils/ContextPanel";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../base/BaseUrl";
 import MUIDataTable from "mui-datatables";
@@ -14,6 +19,12 @@ const NotificationList = () => {
   const [loading, setLoading] = useState(false);
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const pageParam = parseInt(searchParams.get("page") || "0", 10);
+  const searchParam = searchParams.get("search") || "";
+
   useEffect(() => {
     const fetchNotificationData = async () => {
       try {
@@ -29,22 +40,13 @@ const NotificationList = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         const res = response.data?.notification;
         if (Array.isArray(res)) {
-          const tempRows = res.map((item) => [
-            moment(item["notification_date"]).format("DD-MM-YYYY"),
-
-            item["notification_course"],
-            item["notification_heading"],
-            item["notification_description"],
-          ]);
           setCNotificationListData(response.data?.notification);
         }
-
-        // setCNotificationListData(response.data?.notification);
       } catch (error) {
         console.error("Error fetching notification data", error);
       } finally {
@@ -52,8 +54,7 @@ const NotificationList = () => {
       }
     };
     fetchNotificationData();
-    setLoading(false);
-  }, []);
+  }, [isPanelUp, navigate]);
 
   const columns = [
     {
@@ -95,12 +96,26 @@ const NotificationList = () => {
   const options = {
     selectableRows: "none",
     elevation: 0,
-
     responsive: "standard",
     viewColumns: true,
     download: true,
     filter: false,
     print: true,
+    page: pageParam,
+    searchText: searchParam,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onTableChange: (action, tableState) => {
+      if (action === "changePage") {
+        setSearchParams({
+          search: tableState.searchText || "",
+          page: tableState.page.toString(),
+        });
+      }
+    },
+    onSearchChange: (searchText) => {
+      setSearchParams({ search: searchText || "", page: "0" });
+    },
   };
   return (
     <Layout>
@@ -108,16 +123,9 @@ const NotificationList = () => {
         <h3 className="text-center md:text-left text-lg md:text-xl font-bold">
           Notification List
         </h3>
-        {/* 
-        <Link
-          to="/add-notification"
-          className="btn btn-primary text-center md:text-right text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md"
-        >
-          + Add Notification
-        </Link> */}
         <NotificationCreate
           className={ButtonCreate}
-          onClick={() => navigate("/add-notification")}
+          onClick={() => navigate(`/add-notification${location.search}`)}
         ></NotificationCreate>
       </div>
       <div className="mt-5">

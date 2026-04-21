@@ -1,7 +1,7 @@
 import { Card, CardBody, Input, Typography } from "@material-tailwind/react";
 import CommonCard from "../../components/common/dataCard/CommonCard";
 import Layout from "../../layout/Layout";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useEffect, useState } from "react";
 import Fields from "../../components/common/TextField/TextField";
@@ -15,6 +15,7 @@ const View = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+  const location = useLocation();
   const [student, setStudentDelivery] = useState({});
   const [studentnew, setStudent] = useState({});
 
@@ -100,7 +101,7 @@ const View = () => {
   };
 
   const handleBackButton = () => {
-    navigate('/pending-delivery');
+    navigate(`/pending-delivery${location.search}`);
   };
 
   return (

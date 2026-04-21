@@ -3,7 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import MUIDataTable from "mui-datatables";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import BASE_URL from "../../base/BaseUrl";
 import { StudentView } from "../../components/buttonIndex/ButtonComponents";
@@ -14,12 +14,43 @@ const StudentList = () => {
   const [studentListData, setStudentListData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [enquiryDate, setEnquiryDate] = useState(
-    localStorage.getItem("enquiry_date_student_filter") || "",
+    localStorage.getItem("enquiry_date_student_filter") || ""
   );
   const [regDate, setRegDate] = useState(
-    localStorage.getItem("reg_date_student_filter") || "",
+    localStorage.getItem("reg_date_student_filter") || ""
   );
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const page = parseInt(searchParams.get("page") || "0");
+
+  const handleSearch = (value) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        if (value) {
+          params.set("search", value);
+        } else {
+          params.delete("search");
+        }
+        params.set("page", "0");
+        return params;
+      },
+      { replace: true }
+    );
+  };
+
+  const handlePageChange = (currentPage) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", currentPage.toString());
+        return params;
+      },
+      { replace: true }
+    );
+  };
+
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
@@ -31,7 +62,7 @@ const StudentList = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          },
+          }
         );
 
         const res = response.data?.student;
@@ -139,7 +170,9 @@ const StudentList = () => {
           return (
             <div className="flex items-center space-x-2">
               <StudentView
-                onClick={() => navigate(`/view-student/${id}`)}
+                onClick={() =>
+                  navigate(`/view-student/${id}?${searchParams.toString()}`)
+                }
                 className="h-5 w-5 cursor-pointer"
               />
             </div>
@@ -171,6 +204,12 @@ const StudentList = () => {
     download: true,
     filter: false,
     print: true,
+    searchText: searchQuery,
+    page: page,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onSearchChange: (searchText) => handleSearch(searchText),
+    onChangePage: (currentPage) => handlePageChange(currentPage),
   };
 
   const emailnotification = (e) => {
@@ -223,7 +262,7 @@ const StudentList = () => {
                   setEnquiryDate(e.target.value);
                   localStorage.setItem(
                     "enquiry_date_student_filter",
-                    e.target.value,
+                    e.target.value
                   );
                 }}
               ></Input>
@@ -236,7 +275,7 @@ const StudentList = () => {
                   setRegDate(e.target.value);
                   localStorage.setItem(
                     "reg_date_student_filter",
-                    e.target.value,
+                    e.target.value
                   );
                 }}
               ></Input>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import axios from "axios";
 import BASE_URL from "../../base/BaseUrl";
@@ -10,6 +10,7 @@ import { ButtonBack, ButtonCreate } from "../../components/common/ButtonCss";
 
 const AddCountry = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [student, setCountry] = useState({
     country_name: "",
@@ -59,7 +60,7 @@ const AddCountry = () => {
 
       if (response.data.code == 200) {
         toast.success("Data Updated Successfully");
-        navigate("/country");
+        navigate(`/country${location.search}`);
       } else {
         if (response.data.code == 401) {
           toast.error("Country Duplicate Entry");
@@ -82,7 +83,7 @@ const AddCountry = () => {
       <div>
         {/* Title */}
         <div className="flex mb-4 mt-6">
-          <Link to="/country">
+          <Link to={`/country${location.search}`}>
             <MdKeyboardBackspace className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl" />
           </Link>
           <h1 className="text-2xl text-[#464D69] font-semibold ml-2 content-center">
@@ -129,7 +130,7 @@ const AddCountry = () => {
               </button>
               <button
                 className={ButtonBack}
-                onClick={() => navigate("/country")}
+                onClick={() => navigate(`/country${location.search}`)}
               >
                 Back
               </button>

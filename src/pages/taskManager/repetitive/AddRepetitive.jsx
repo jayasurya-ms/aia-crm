@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -38,6 +38,8 @@ const daysOfMonth = Array.from({ length: 30 }, (_, i) => ({
 
 const AddRepetitive = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [enquiry, setEnquiry] = useState({
@@ -112,7 +114,7 @@ const AddRepetitive = () => {
 
       if (response.data.code == "200") {
         toast.success("Data Updated Successfully");
-        navigate(-1);
+        navigate(`/task-repetitive${location.search}`);
       } else {
         if (response.data.code == "401") {
           toast.error("Task Duplicate Entry");
@@ -136,7 +138,7 @@ const AddRepetitive = () => {
         {/* Title */}
         <div className="flex mb-4 mt-6">
           <MdKeyboardBackspace
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/task-repetitive${location.search}`)}
             className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl"
           />
 
@@ -210,7 +212,7 @@ const AddRepetitive = () => {
               </button>
               <button
                 type="button"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate(`/task-repetitive${location.search}`)}
                 className={ButtonBack}
               >
                 Back

@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -46,6 +51,8 @@ const status1 = [
 
 const EditTask = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { id } = useParams();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [enquiry, setEnquiry] = useState({
@@ -74,7 +81,7 @@ const EditTask = () => {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
         setUserList(response.data.userList);
       } catch (error) {
@@ -94,7 +101,7 @@ const EditTask = () => {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
         setEnquiry(response.data.task);
       } catch (error) {
@@ -136,13 +143,12 @@ const EditTask = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (response.data.code == "200") {
         toast.success("Data Updated Successfully");
-        navigate("/task-pending");
-     
+        navigate(`/task-pending${location.search}`);
       } else {
         if (response.data.code == "401") {
           toast.error("Task Duplicate Entry");
@@ -165,7 +171,7 @@ const EditTask = () => {
       <div>
         {/* Title */}
         <div className="flex mb-4 mt-6">
-          <Link to="/task-pending">
+          <Link to={`/task-pending${location.search}`}>
             <MdKeyboardBackspace className=" text-white bg-[#464D69] p-1 w-10 h-8 cursor-pointer rounded-2xl" />
           </Link>
           <h1 className="text-2xl text-[#464D69] font-semibold ml-2 content-center">

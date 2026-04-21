@@ -3,7 +3,7 @@ import Layout from "../../layout/Layout";
 import MUIDataTable from "mui-datatables";
 import axios from "axios";
 import BASE_URL from "../../base/BaseUrl";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { ContextPanel } from "../../utils/ContextPanel";
 import { MdEdit } from "react-icons/md";
 import { Email, GroupAdd, Visibility, WhatsApp } from "@mui/icons-material";
@@ -29,11 +29,44 @@ const ClassList = () => {
   const [classListData, setClassListData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [classDate, setClassDate] = useState(
-    localStorage.getItem("class_date_filter") || "",
+    localStorage.getItem("class_date_filter") || ""
   );
   const { isPanelUp } = useContext(ContextPanel);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const page = parseInt(searchParams.get("page") || "0");
+
   const [shouldRefetch, setShouldRefetch] = useState(false);
+
+  const handleSearch = (value) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        if (value) {
+          params.set("search", value);
+        } else {
+          params.delete("search");
+        }
+        params.set("page", "0");
+        return params;
+      },
+      { replace: true }
+    );
+  };
+
+  const handlePageChange = (currentPage) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", currentPage.toString());
+        return params;
+      },
+      { replace: true }
+    );
+  };
+
   useEffect(() => {
     const fetchClassData = async () => {
       try {
@@ -49,7 +82,7 @@ const ClassList = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          },
+          }
         );
 
         const res = response.data?.class;
@@ -148,7 +181,7 @@ const ClassList = () => {
         Academy of Internal Audit\n
         C-826, Vipul Plaza, Sector-81`;
       const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-        message,
+        message
       )}`;
       window.open(whatsappLink, "_blank");
     });
@@ -238,7 +271,9 @@ const ClassList = () => {
               {status == "Inactive" && (
                 <Tooltip title="View" placement="top">
                   <ClassView
-                    onClick={() => navigate(`/view-class/${id}`)}
+                    onClick={() =>
+                      navigate(`/view-class/${id}?${searchParams.toString()}`)
+                    }
                     className="h-5 w-5 cursor-pointer"
                   />
                 </Tooltip>
@@ -277,9 +312,16 @@ const ClassList = () => {
               )}
               {status == "Active" && (
                 <Tooltip title="Add Attendence" placement="top">
-                  <Link to={`/add-attendence/${id}`}>
+                  <div
+                    className="cursor-pointer"
+                    onClick={() =>
+                      navigate(
+                        `/add-attendence/${id}?${searchParams.toString()}`
+                      )
+                    }
+                  >
                     <ClassAddAttendance className="h-5 w-5 cursor-pointer" />
-                  </Link>
+                  </div>
                 </Tooltip>
               )}
             </div>
@@ -309,6 +351,12 @@ const ClassList = () => {
     download: true,
     filter: false,
     print: true,
+    searchText: searchQuery,
+    page: page,
+    searchOpen: true,
+    searchPlaceholder: "Search...",
+    onSearchChange: (searchText) => handleSearch(searchText),
+    onChangePage: (currentPage) => handlePageChange(currentPage),
   };
   return (
     <Layout>
@@ -340,7 +388,7 @@ const ClassList = () => {
 
         <ClassCreate
           className={ButtonCreate}
-          onClick={() => navigate("/add-class")}
+          onClick={() => navigate(`/add-class?${searchParams.toString()}`)}
         ></ClassCreate>
       </div>
       <div className="mt-5">
