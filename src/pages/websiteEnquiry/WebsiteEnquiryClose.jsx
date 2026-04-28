@@ -126,6 +126,30 @@ const WebsiteEnquiryClose = () => {
       },
     },
     {
+      name: "utm_medium",
+      label: "Medium",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
+    {
+      name: "utm_source",
+      label: "Source",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
+    {
+      name: "utm_campaign",
+      label: "Campaign",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
+    {
       name: "created_date",
       label: "Created Date",
       options: {

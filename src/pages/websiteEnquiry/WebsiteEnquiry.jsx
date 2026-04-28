@@ -32,7 +32,7 @@ const WebsiteEnquiry = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       setWebsiteListData(response.data?.webenquiry);
@@ -54,7 +54,7 @@ const WebsiteEnquiry = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const enquiryData = response.data?.webenquiry;
@@ -125,6 +125,30 @@ const WebsiteEnquiry = () => {
         sort: false,
       },
     },
+    {
+      name: "utm_medium",
+      label: "Medium",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
+    {
+      name: "utm_source",
+      label: "Source",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
+    {
+      name: "utm_campaign",
+      label: "Campaign",
+      options: {
+        filter: true,
+        sort: false,
+      },
+    },
 
     {
       name: "created_date",
@@ -171,7 +195,10 @@ const WebsiteEnquiry = () => {
     searchPlaceholder: "Search...",
     onTableChange: (action, tableState) => {
       if (action === "changePage") {
-        setSearchParams({ search: tableState.searchText || "", page: tableState.page.toString() });
+        setSearchParams({
+          search: tableState.searchText || "",
+          page: tableState.page.toString(),
+        });
       }
     },
     onSearchChange: (searchText) => {
@@ -199,7 +226,7 @@ const WebsiteEnquiry = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.success("Status updated successfully!");
